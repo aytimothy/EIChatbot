@@ -38,8 +38,27 @@ namespace aytimothy.EIChatbot.Data {
         /// </summary>
         public Shape[] Shapes;
 
+        /// <summary>
+        /// Creates a new empty intent.
+        /// </summary>
+        /// <remarks>
+        /// For proper intent creation, you'll want to use ChatbotEditor's CreateIntent().
+        /// This just creates a bare-bones structure without any processing.
+        /// </remarks>
+        /// <param name="intentID">The domain ID of the intent you wish to create.</param>
+        /// <param name="intentString">The match string of the intent you wish to create.</param>
         public Intent(string intentID, string intentString) {
-            throw new NotImplementedException();
+            string[] intentSplit = intentID.Split('.');
+            if (intentSplit.Length == 1) {
+                IntentID = intentSplit[0];
+                IntentDomain = "";
+            }
+            if (intentSplit.Length > 1) {
+                IntentID = intentSplit[intentSplit.Length - 1];
+                IntentDomain = String.Join(".", intentSplit, 0, intentSplit.Length - 1);
+            }
+
+            Shapes = new Shape[1] { new Shape(intentString) };
         }
     }
 }

@@ -20,6 +20,9 @@ namespace aytimothy.EIChatbot.Data {
         /// </summary>
         public string RawContents;
 
+        /// <summary>
+        /// Is this entity an output? Does it return a value if its intent is the 
+        /// </summary>
         public bool IsOutputEntity;
         public string OutputEntityName; 
 

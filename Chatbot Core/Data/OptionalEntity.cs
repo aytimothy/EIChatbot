@@ -5,6 +5,7 @@ using System.Text;
 
 namespace aytimothy.EIChatbot.Data {
     [Serializable]
+    [Obsolete("Use WildcardEntity instead.")]
     public class OptionalEntity : Entity {
         public OptionalEntity() {
             Type = EntityType.Optional;
