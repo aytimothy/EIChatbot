@@ -11,6 +11,7 @@ namespace aytimothy.EIChatbot.Data {
     /// </example>
     [Serializable]
     public class Vocabulary : ChatbotData {
-        public string[] synonyms;
+        public string Meaning;
+        public string[] Synonyms;
     }
 }

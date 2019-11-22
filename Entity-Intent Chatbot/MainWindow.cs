@@ -19,16 +19,25 @@ namespace aytimothy.EIChatbot.Editor {
 
         private void NewButton_Click(object sender, EventArgs e) {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Chatbot Json|*.json|Chatbot Binary|*.eic|All|*.*";
             DialogResult dialogResult = saveFileDialog.ShowDialog();
 
-            throw new NotImplementedException();
+            if (dialogResult == DialogResult.OK) {
+                EditorWindow editorWindow = new EditorWindow(this, saveFileDialog.FileName);
+                editorWindow.Show();
+                Hide();
+            }
         }
 
         private void OpenButton_Click(object sender, EventArgs e) {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             DialogResult dialogResult = openFileDialog.ShowDialog();
 
-            throw new NotImplementedException();
+            if (dialogResult == DialogResult.OK) {
+                EditorWindow editorWindow = new EditorWindow(this, openFileDialog.FileName);
+                editorWindow.Show();
+                Hide();
+            }
         }
 
         private void PreferencesButton_Click(object sender, EventArgs e) {

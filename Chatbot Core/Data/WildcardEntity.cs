@@ -9,7 +9,7 @@ namespace aytimothy.EIChatbot.Data {
         /// <summary>
         /// Can nothing be in here (be empty) to be a positive match?
         /// </summary>
-        public bool Optional;
+        public bool IsOptional;
 
         /// <summary>
         /// Creates a new Wildcard entity.
@@ -24,7 +24,7 @@ namespace aytimothy.EIChatbot.Data {
         /// <param name="optional">Must it contain something?</param>
         public WildcardEntity(bool optional) {
             Type = EntityType.Wildcard;
-            Optional = optional;
+            IsOptional = optional;
         }
     }
 }
