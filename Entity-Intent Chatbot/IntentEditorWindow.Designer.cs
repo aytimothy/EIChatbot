@@ -26,14 +26,14 @@
         /// </summary>
         private void InitializeComponent() {
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.DomainTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.GUIDTextBox = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Shape = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.AddShapeButton = new System.Windows.Forms.Button();
+            this.EditShapeButton = new System.Windows.Forms.Button();
+            this.RemoveShapeButton = new System.Windows.Forms.Button();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
@@ -48,12 +48,13 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Domain";
             // 
-            // textBox1
+            // DomainTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(83, 6);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(501, 20);
-            this.textBox1.TabIndex = 1;
+            this.DomainTextBox.Location = new System.Drawing.Point(83, 6);
+            this.DomainTextBox.Name = "DomainTextBox";
+            this.DomainTextBox.Size = new System.Drawing.Size(501, 20);
+            this.DomainTextBox.TabIndex = 1;
+            this.DomainTextBox.TextChanged += new System.EventHandler(this.DomainTextBox_TextChanged);
             // 
             // label2
             // 
@@ -64,12 +65,13 @@
             this.label2.TabIndex = 2;
             this.label2.Text = "GUID";
             // 
-            // textBox2
+            // GUIDTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(83, 29);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(501, 20);
-            this.textBox2.TabIndex = 3;
+            this.GUIDTextBox.Location = new System.Drawing.Point(83, 29);
+            this.GUIDTextBox.Name = "GUIDTextBox";
+            this.GUIDTextBox.ReadOnly = true;
+            this.GUIDTextBox.Size = new System.Drawing.Size(501, 20);
+            this.GUIDTextBox.TabIndex = 3;
             // 
             // dataGridView1
             // 
@@ -87,32 +89,35 @@
             this.Shape.HeaderText = "Text";
             this.Shape.Name = "Shape";
             // 
-            // button1
+            // AddShapeButton
             // 
-            this.button1.Location = new System.Drawing.Point(12, 211);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.AddShapeButton.Location = new System.Drawing.Point(12, 211);
+            this.AddShapeButton.Name = "AddShapeButton";
+            this.AddShapeButton.Size = new System.Drawing.Size(75, 23);
+            this.AddShapeButton.TabIndex = 5;
+            this.AddShapeButton.Text = "Add";
+            this.AddShapeButton.UseVisualStyleBackColor = true;
+            this.AddShapeButton.Click += new System.EventHandler(this.AddShapeButton_Click);
             // 
-            // button2
+            // EditShapeButton
             // 
-            this.button2.Location = new System.Drawing.Point(93, 211);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
+            this.EditShapeButton.Location = new System.Drawing.Point(93, 211);
+            this.EditShapeButton.Name = "EditShapeButton";
+            this.EditShapeButton.Size = new System.Drawing.Size(75, 23);
+            this.EditShapeButton.TabIndex = 6;
+            this.EditShapeButton.Text = "Edit";
+            this.EditShapeButton.UseVisualStyleBackColor = true;
+            this.EditShapeButton.Click += new System.EventHandler(this.EditShapeButton_Click);
             // 
-            // button3
+            // RemoveShpaeButton
             // 
-            this.button3.Location = new System.Drawing.Point(174, 211);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
+            this.RemoveShapeButton.Location = new System.Drawing.Point(174, 211);
+            this.RemoveShapeButton.Name = "RemoveShapeButton";
+            this.RemoveShapeButton.Size = new System.Drawing.Size(75, 23);
+            this.RemoveShapeButton.TabIndex = 7;
+            this.RemoveShapeButton.Text = "Remove";
+            this.RemoveShapeButton.UseVisualStyleBackColor = true;
+            this.RemoveShapeButton.Click += new System.EventHandler(this.RemoveShapeButton_Click);
             // 
             // dataGridView2
             // 
@@ -128,13 +133,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(595, 403);
             this.Controls.Add(this.dataGridView2);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.RemoveShapeButton);
+            this.Controls.Add(this.EditShapeButton);
+            this.Controls.Add(this.AddShapeButton);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.GUIDTextBox);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.DomainTextBox);
             this.Controls.Add(this.label1);
             this.Name = "IntentEditorWindow";
             this.Text = "IntentEditorWindow";
@@ -148,14 +153,14 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox DomainTextBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox GUIDTextBox;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Shape;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button AddShapeButton;
+        private System.Windows.Forms.Button EditShapeButton;
+        private System.Windows.Forms.Button RemoveShapeButton;
         private System.Windows.Forms.DataGridView dataGridView2;
     }
 }

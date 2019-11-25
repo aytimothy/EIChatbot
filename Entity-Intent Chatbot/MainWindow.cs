@@ -23,8 +23,9 @@ namespace aytimothy.EIChatbot.Editor {
             DialogResult dialogResult = saveFileDialog.ShowDialog();
 
             if (dialogResult == DialogResult.OK) {
-                EditorWindow editorWindow = new EditorWindow(this, saveFileDialog.FileName);
+                EditorWindow editorWindow = new EditorWindow(this);
                 editorWindow.Show();
+                editorWindow.CreateFile(saveFileDialog.FileName, "JSON");
                 Hide();
             }
         }
@@ -34,8 +35,9 @@ namespace aytimothy.EIChatbot.Editor {
             DialogResult dialogResult = openFileDialog.ShowDialog();
 
             if (dialogResult == DialogResult.OK) {
-                EditorWindow editorWindow = new EditorWindow(this, openFileDialog.FileName);
+                EditorWindow editorWindow = new EditorWindow(this);
                 editorWindow.Show();
+                editorWindow.OpenFile(openFileDialog.FileName);
                 Hide();
             }
         }

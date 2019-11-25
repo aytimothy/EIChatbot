@@ -26,6 +26,10 @@
         /// </summary>
         private void InitializeComponent() {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.VocabularyGUID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VocabularyName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VocabularySynonyms = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VocabularySize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VocabularyAddButton = new System.Windows.Forms.Button();
             this.VocabularyEditButton = new System.Windows.Forms.Button();
             this.VocabularyRemoveButton = new System.Windows.Forms.Button();
@@ -35,10 +39,6 @@
             this.DictionaryLabel = new System.Windows.Forms.Label();
             this.GUIDTextBox = new System.Windows.Forms.TextBox();
             this.GUIDLabel = new System.Windows.Forms.Label();
-            this.VocabularyGUID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.VocabularyName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.VocabularySynonyms = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.VocabularySize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,6 +55,26 @@
             this.dataGridView1.Size = new System.Drawing.Size(425, 150);
             this.dataGridView1.TabIndex = 0;
             // 
+            // VocabularyGUID
+            // 
+            this.VocabularyGUID.HeaderText = "GUID";
+            this.VocabularyGUID.Name = "VocabularyGUID";
+            // 
+            // VocabularyName
+            // 
+            this.VocabularyName.HeaderText = "Word";
+            this.VocabularyName.Name = "VocabularyName";
+            // 
+            // VocabularySynonyms
+            // 
+            this.VocabularySynonyms.HeaderText = "Synonyms";
+            this.VocabularySynonyms.Name = "VocabularySynonyms";
+            // 
+            // VocabularySize
+            // 
+            this.VocabularySize.HeaderText = "Count";
+            this.VocabularySize.Name = "VocabularySize";
+            // 
             // VocabularyAddButton
             // 
             this.VocabularyAddButton.Location = new System.Drawing.Point(12, 168);
@@ -63,6 +83,7 @@
             this.VocabularyAddButton.TabIndex = 1;
             this.VocabularyAddButton.Text = "Add";
             this.VocabularyAddButton.UseVisualStyleBackColor = true;
+            this.VocabularyAddButton.Click += new System.EventHandler(this.VocabularyAddButton_Click);
             // 
             // VocabularyEditButton
             // 
@@ -72,6 +93,7 @@
             this.VocabularyEditButton.TabIndex = 2;
             this.VocabularyEditButton.Text = "Edit";
             this.VocabularyEditButton.UseVisualStyleBackColor = true;
+            this.VocabularyEditButton.Click += new System.EventHandler(this.VocabularyEditButton_Click);
             // 
             // VocabularyRemoveButton
             // 
@@ -81,6 +103,7 @@
             this.VocabularyRemoveButton.TabIndex = 3;
             this.VocabularyRemoveButton.Text = "Remove";
             this.VocabularyRemoveButton.UseVisualStyleBackColor = true;
+            this.VocabularyRemoveButton.Click += new System.EventHandler(this.VocabularyRemoveButton_Click);
             // 
             // NameLabel
             // 
@@ -97,6 +120,7 @@
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.Size = new System.Drawing.Size(361, 20);
             this.NameTextBox.TabIndex = 5;
+            this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
             // 
             // DescriptionTextBox
             // 
@@ -104,6 +128,7 @@
             this.DescriptionTextBox.Name = "DescriptionTextBox";
             this.DescriptionTextBox.Size = new System.Drawing.Size(361, 20);
             this.DescriptionTextBox.TabIndex = 7;
+            this.DescriptionTextBox.TextChanged += new System.EventHandler(this.DescriptionTextBox_TextChanged);
             // 
             // DictionaryLabel
             // 
@@ -130,26 +155,6 @@
             this.GUIDLabel.Size = new System.Drawing.Size(34, 13);
             this.GUIDLabel.TabIndex = 8;
             this.GUIDLabel.Text = "GUID";
-            // 
-            // VocabularyGUID
-            // 
-            this.VocabularyGUID.HeaderText = "GUID";
-            this.VocabularyGUID.Name = "VocabularyGUID";
-            // 
-            // VocabularyName
-            // 
-            this.VocabularyName.HeaderText = "Word";
-            this.VocabularyName.Name = "VocabularyName";
-            // 
-            // VocabularySynonyms
-            // 
-            this.VocabularySynonyms.HeaderText = "Synonyms";
-            this.VocabularySynonyms.Name = "VocabularySynonyms";
-            // 
-            // VocabularySize
-            // 
-            this.VocabularySize.HeaderText = "Count";
-            this.VocabularySize.Name = "VocabularySize";
             // 
             // DictionaryEditorWindow
             // 
