@@ -36,7 +36,7 @@ namespace aytimothy.EIChatbot.Data {
         /// <summary>
         /// This is a list of text patterns that fits this intent.
         /// </summary>
-        public Shape[] Shapes;
+        public Shape[] Shapes = new Shape[0];
 
         /// <summary>
         /// Creates a new empty intent.

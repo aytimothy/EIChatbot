@@ -32,11 +32,12 @@ namespace aytimothy.EIChatbot.Data {
         /// <summary>
         /// All the dictionaries contained in this knowledge-base.
         /// </summary>
-        public Dictionary[] Dictionaries;
+        public Dictionary[] Dictionaries = new Dictionary[0];
+
         /// <summary>
         /// All the intents contained in this knowledge-base.
         /// </summary>
-        public Intent[] Intents;
+        public Intent[] Intents = new Intent[0];
 
         /// <summary>
         /// Searches the knowledgebase for a dictionary structure with the specified name or GUID.

@@ -24,6 +24,6 @@ namespace aytimothy.EIChatbot.Data {
         /// <summary>
         /// The actual collection of vocabulary words.
         /// </summary>
-        public Vocabulary[] Vocabulary;
+        public Vocabulary[] Vocabulary = new Vocabulary[0];
     }
 }

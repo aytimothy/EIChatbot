@@ -1,10 +1,10 @@
-﻿using aytimothy.EIChatbot.Data;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
+using aytimothy.EIChatbot.Data;
+using Newtonsoft.Json;
 
 namespace aytimothy.EIChatbot.Editor
 {
@@ -18,9 +18,33 @@ namespace aytimothy.EIChatbot.Editor
         private List<DictionaryEditorWindow> dictionaryEditors = new List<DictionaryEditorWindow>();
         private List<IntentEditorWindow> intentEditors = new List<IntentEditorWindow>();
 
+        public bool modified;
+
         public EditorWindow(MainWindow rootWindow) {
             RootWindow = rootWindow;
             InitializeComponent();
+        }
+
+        public void CreateFile(string filePath) {
+            string[] pathSplit = filePath.Split('.');
+            if (pathSplit.Length == 1) {
+                CreateFile(filePath, "BIN");
+                return;
+            }
+
+            string extension = pathSplit[pathSplit.Length - 1].ToUpper();
+            switch (extension) {
+                case "JSON":
+                    CreateFile(filePath, "JSON");
+                    break;
+                case "BIN":
+                    CreateFile("BIN");
+                    break;
+                case "EIC":
+                    goto case "BIN";
+                default:
+                    goto case "JSON";
+            }
         }
 
         public void CreateFile(string filePath, string fileType) {
@@ -32,7 +56,7 @@ namespace aytimothy.EIChatbot.Editor
                 if (File.Exists(filePath))
                     File.Delete(filePath);
 
-                switch (fileType) {
+                switch (fileType.ToUpper()) {
                     case "BIN":
                         BinaryFormatter binaryFormatter = new BinaryFormatter();
                         FileStream binaryFileStream = File.Create(filePath);
@@ -43,6 +67,9 @@ namespace aytimothy.EIChatbot.Editor
                         string jsonString = JsonConvert.SerializeObject(Data);
                         File.WriteAllText(filePath, jsonString);
                         break;
+                    case "EIC":
+                        FileType = "BIN";
+                        goto case "BIN";
                     default:
                         FileType = "JSON";
                         goto case "JSON";
@@ -94,6 +121,39 @@ namespace aytimothy.EIChatbot.Editor
             UpdateTitle();
         }
 
+        public void SaveFile(string filePath) {
+            switch (FileType) {
+                case "JSON":
+                    SaveJSON(filePath, Data);
+                    break;
+                case "BIN":
+                    SaveBinary(filePath, Data);
+                    break;
+                case "EIC":
+                    goto case "BIN";
+                default:
+                    goto case "JSON";
+            }
+        }
+
+        public void SaveBinary(string filePath, Knowledgebase data) {
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+            
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            FileStream fileStream = File.Open(filePath, FileMode.CreateNew);
+            binaryFormatter.Serialize(fileStream, data);
+            fileStream.Close();
+        }
+
+        public void SaveJSON(string filePath, Knowledgebase data) {
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            string jsonString = JsonConvert.SerializeObject(data);
+            File.WriteAllText(filePath, jsonString);
+        }
+
         private void EditorWindow_Load(object sender, EventArgs e) {
             UpdateTitle();
         }
@@ -103,12 +163,38 @@ namespace aytimothy.EIChatbot.Editor
             Text = "Chatbot Editor | " + pathString;
         }
 
+        private void UpdateDictionaries() {
+            DictionaryView.Rows.Clear();
+
+            foreach (Dictionary dictionary in Data.Dictionaries)
+                DictionaryView.Rows.Add(dictionary.GUID, dictionary.Name, dictionary.Vocabulary.Length.ToString());
+        }
+
+        private void UpdateIntents() {
+            IntentView.Rows.Clear();
+
+            foreach (Intent intent in Data.Intents)
+                IntentView.Rows.Add(intent.GUID, intent.IntentID, intent.IntentDomain, intent.Shapes.Length.ToString());
+        }
+
         private void EditorWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            
+            if (modified) {
+                DialogResult saveBoxResult = MessageBox.Show("Unsaved Changes", "Would you like to save your data?", MessageBoxButtons.YesNoCancel);
+                switch (saveBoxResult) {
+                    case DialogResult.Yes:
+                        SaveFile(FilePath);
+                        break;
+                    case DialogResult.No:
+                        break;
+                    case DialogResult.Cancel:
+                        e.Cancel = true;
+                        return;
+                }
+            }
         }
 
         private void EditorWindow_FormClosed(object sender, FormClosedEventArgs e) {
-
+            RootWindow.Show();
         }
 
         private void CreateDictionaryButton_Click(object sender, EventArgs e) {
@@ -126,7 +212,7 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void EditDictionaryButton_Click(object sender, EventArgs e) {
-
+            
         }
 
         private void RemoveDictionaryButton_Click(object sender, EventArgs e) {
@@ -153,6 +239,79 @@ namespace aytimothy.EIChatbot.Editor
 
         private void RemoveIntentButton_Click(object sender, EventArgs e) {
 
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (modified) {
+                throw new NotImplementedException();
+            }
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Chatbot Json|*.json|Chatbot Binary|*.eic|All|*.*";
+            DialogResult saveFileDialogResult = saveFileDialog.ShowDialog();
+            
+            if (saveFileDialogResult == DialogResult.OK)
+                CreateFile(saveFileDialog.FileName);
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e) {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Chatbot Json|*.json|Chatbot Binary|*.eic|All|*.*";
+            DialogResult openFileDialogResult = openFileDialog.ShowDialog();
+
+            if (openFileDialogResult == DialogResult.OK)
+                OpenFile(openFileDialog.FileName);
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e) {
+            Close();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (String.IsNullOrEmpty(FilePath)) {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Chatbot Json|*.json|Chatbot Binary|*.eic|All|*.*";
+                DialogResult saveFileDialogResult = saveFileDialog.ShowDialog();
+
+                if (saveFileDialogResult == DialogResult.OK)
+                    FilePath = saveFileDialog.FileName;
+            }
+
+            if (!String.IsNullOrEmpty(FilePath)) {
+                SaveFile(FilePath);
+                modified = false;
+                UpdateTitle();
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e) {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Chatbot Json|*.json|Chatbot Binary|*.eic|All|*.*";
+            DialogResult saveFileDialogResult = saveFileDialog.ShowDialog();
+
+            if (saveFileDialogResult == DialogResult.OK) {
+                FilePath = saveFileDialog.FileName;
+                SaveFile(FilePath);
+                modified = false;
+
+                UpdateTitle();
+            }
+        }
+
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e) {
+            
+        }
+
+        private void metadataToolStripMenuItem_Click(object sender, EventArgs e) {
+            MessageBox.Show("Alert", "Not Implemented Yet >:(");
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
+            AboutWindow aboutWindow = new AboutWindow(this);
+        }
+
+        private void helpToolStripMenuItem1_Click(object sender, EventArgs e) {
+            MessageBox.Show("Alert", "Not Implemented Yet >:(");
         }
     }
 }

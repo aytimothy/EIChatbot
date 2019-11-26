@@ -30,6 +30,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -48,7 +49,7 @@
             this.EditDictionaryButton = new System.Windows.Forms.Button();
             this.RemoveDictionaryButton = new System.Windows.Forms.Button();
             this.IntentLabel = new System.Windows.Forms.Label();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.IntentView = new System.Windows.Forms.DataGridView();
             this.IntentGUID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IntentName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IntentDomain = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -58,14 +59,15 @@
             this.RemoveIntentButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DictionaryView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntentView)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 439);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 687);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(588, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(882, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -77,7 +79,8 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(588, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
+            this.menuStrip1.Size = new System.Drawing.Size(882, 25);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -86,55 +89,75 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.closeToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator1,
             this.quitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 19);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // closeToolStripMenuItem
+            // 
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(120, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(192, 6);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.quitToolStripMenuItem.Text = "Quit";
+            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
             // editorToolStripMenuItem
             // 
             this.editorToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.metadataToolStripMenuItem});
             this.editorToolStripMenuItem.Name = "editorToolStripMenuItem";
-            this.editorToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editorToolStripMenuItem.Size = new System.Drawing.Size(39, 19);
             this.editorToolStripMenuItem.Text = "Edit";
             // 
             // metadataToolStripMenuItem
@@ -142,6 +165,7 @@
             this.metadataToolStripMenuItem.Name = "metadataToolStripMenuItem";
             this.metadataToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.metadataToolStripMenuItem.Text = "Metadata";
+            this.metadataToolStripMenuItem.Click += new System.EventHandler(this.metadataToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -149,7 +173,7 @@
             this.aboutToolStripMenuItem,
             this.helpToolStripMenuItem1});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 19);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
@@ -157,12 +181,14 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem1
             // 
             this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
             this.helpToolStripMenuItem1.Size = new System.Drawing.Size(107, 22);
             this.helpToolStripMenuItem1.Text = "Help";
+            this.helpToolStripMenuItem1.Click += new System.EventHandler(this.helpToolStripMenuItem1_Click);
             // 
             // DictionaryView
             // 
@@ -171,9 +197,10 @@
             this.GUID,
             this.DictionaryName,
             this.DictionarySize});
-            this.DictionaryView.Location = new System.Drawing.Point(12, 40);
+            this.DictionaryView.Location = new System.Drawing.Point(18, 62);
+            this.DictionaryView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.DictionaryView.Name = "DictionaryView";
-            this.DictionaryView.Size = new System.Drawing.Size(564, 150);
+            this.DictionaryView.Size = new System.Drawing.Size(846, 231);
             this.DictionaryView.TabIndex = 2;
             // 
             // GUID
@@ -194,17 +221,19 @@
             // DictionaryLabel
             // 
             this.DictionaryLabel.AutoSize = true;
-            this.DictionaryLabel.Location = new System.Drawing.Point(12, 24);
+            this.DictionaryLabel.Location = new System.Drawing.Point(18, 37);
+            this.DictionaryLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.DictionaryLabel.Name = "DictionaryLabel";
-            this.DictionaryLabel.Size = new System.Drawing.Size(62, 13);
+            this.DictionaryLabel.Size = new System.Drawing.Size(92, 20);
             this.DictionaryLabel.TabIndex = 3;
             this.DictionaryLabel.Text = "Dictionaries";
             // 
             // CreateDictionaryButton
             // 
-            this.CreateDictionaryButton.Location = new System.Drawing.Point(12, 196);
+            this.CreateDictionaryButton.Location = new System.Drawing.Point(18, 302);
+            this.CreateDictionaryButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.CreateDictionaryButton.Name = "CreateDictionaryButton";
-            this.CreateDictionaryButton.Size = new System.Drawing.Size(75, 23);
+            this.CreateDictionaryButton.Size = new System.Drawing.Size(112, 35);
             this.CreateDictionaryButton.TabIndex = 4;
             this.CreateDictionaryButton.Text = "Add";
             this.CreateDictionaryButton.UseVisualStyleBackColor = true;
@@ -212,9 +241,10 @@
             // 
             // EditDictionaryButton
             // 
-            this.EditDictionaryButton.Location = new System.Drawing.Point(93, 196);
+            this.EditDictionaryButton.Location = new System.Drawing.Point(140, 302);
+            this.EditDictionaryButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.EditDictionaryButton.Name = "EditDictionaryButton";
-            this.EditDictionaryButton.Size = new System.Drawing.Size(75, 23);
+            this.EditDictionaryButton.Size = new System.Drawing.Size(112, 35);
             this.EditDictionaryButton.TabIndex = 5;
             this.EditDictionaryButton.Text = "Edit";
             this.EditDictionaryButton.UseVisualStyleBackColor = true;
@@ -222,9 +252,10 @@
             // 
             // RemoveDictionaryButton
             // 
-            this.RemoveDictionaryButton.Location = new System.Drawing.Point(174, 196);
+            this.RemoveDictionaryButton.Location = new System.Drawing.Point(261, 302);
+            this.RemoveDictionaryButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RemoveDictionaryButton.Name = "RemoveDictionaryButton";
-            this.RemoveDictionaryButton.Size = new System.Drawing.Size(75, 23);
+            this.RemoveDictionaryButton.Size = new System.Drawing.Size(112, 35);
             this.RemoveDictionaryButton.TabIndex = 6;
             this.RemoveDictionaryButton.Text = "Remove";
             this.RemoveDictionaryButton.UseVisualStyleBackColor = true;
@@ -233,24 +264,26 @@
             // IntentLabel
             // 
             this.IntentLabel.AutoSize = true;
-            this.IntentLabel.Location = new System.Drawing.Point(12, 234);
+            this.IntentLabel.Location = new System.Drawing.Point(18, 360);
+            this.IntentLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.IntentLabel.Name = "IntentLabel";
-            this.IntentLabel.Size = new System.Drawing.Size(39, 13);
+            this.IntentLabel.Size = new System.Drawing.Size(59, 20);
             this.IntentLabel.TabIndex = 7;
             this.IntentLabel.Text = "Intents";
             // 
-            // dataGridView1
+            // IntentView
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.IntentView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.IntentView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IntentGUID,
             this.IntentName,
             this.IntentDomain,
             this.IntentSize});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 250);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(564, 150);
-            this.dataGridView1.TabIndex = 8;
+            this.IntentView.Location = new System.Drawing.Point(18, 385);
+            this.IntentView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.IntentView.Name = "IntentView";
+            this.IntentView.Size = new System.Drawing.Size(846, 231);
+            this.IntentView.TabIndex = 8;
             // 
             // IntentGUID
             // 
@@ -274,9 +307,10 @@
             // 
             // AddIntentButton
             // 
-            this.AddIntentButton.Location = new System.Drawing.Point(12, 406);
+            this.AddIntentButton.Location = new System.Drawing.Point(18, 625);
+            this.AddIntentButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.AddIntentButton.Name = "AddIntentButton";
-            this.AddIntentButton.Size = new System.Drawing.Size(75, 23);
+            this.AddIntentButton.Size = new System.Drawing.Size(112, 35);
             this.AddIntentButton.TabIndex = 9;
             this.AddIntentButton.Text = "Add";
             this.AddIntentButton.UseVisualStyleBackColor = true;
@@ -284,9 +318,10 @@
             // 
             // EditIntentButton
             // 
-            this.EditIntentButton.Location = new System.Drawing.Point(93, 406);
+            this.EditIntentButton.Location = new System.Drawing.Point(140, 625);
+            this.EditIntentButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.EditIntentButton.Name = "EditIntentButton";
-            this.EditIntentButton.Size = new System.Drawing.Size(75, 23);
+            this.EditIntentButton.Size = new System.Drawing.Size(112, 35);
             this.EditIntentButton.TabIndex = 10;
             this.EditIntentButton.Text = "Edit";
             this.EditIntentButton.UseVisualStyleBackColor = true;
@@ -294,9 +329,10 @@
             // 
             // RemoveIntentButton
             // 
-            this.RemoveIntentButton.Location = new System.Drawing.Point(174, 406);
+            this.RemoveIntentButton.Location = new System.Drawing.Point(261, 625);
+            this.RemoveIntentButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RemoveIntentButton.Name = "RemoveIntentButton";
-            this.RemoveIntentButton.Size = new System.Drawing.Size(75, 23);
+            this.RemoveIntentButton.Size = new System.Drawing.Size(112, 35);
             this.RemoveIntentButton.TabIndex = 11;
             this.RemoveIntentButton.Text = "Remove";
             this.RemoveIntentButton.UseVisualStyleBackColor = true;
@@ -304,13 +340,13 @@
             // 
             // EditorWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 461);
+            this.ClientSize = new System.Drawing.Size(882, 709);
             this.Controls.Add(this.RemoveIntentButton);
             this.Controls.Add(this.EditIntentButton);
             this.Controls.Add(this.AddIntentButton);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.IntentView);
             this.Controls.Add(this.IntentLabel);
             this.Controls.Add(this.RemoveDictionaryButton);
             this.Controls.Add(this.EditDictionaryButton);
@@ -320,6 +356,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "EditorWindow";
             this.Text = "Chatbot Editor (%FILENAME%)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditorWindow_FormClosing);
@@ -328,7 +365,7 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DictionaryView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntentView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -358,7 +395,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DictionaryName;
         private System.Windows.Forms.DataGridViewTextBoxColumn DictionarySize;
         private System.Windows.Forms.Label IntentLabel;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView IntentView;
         private System.Windows.Forms.DataGridViewTextBoxColumn IntentGUID;
         private System.Windows.Forms.DataGridViewTextBoxColumn IntentName;
         private System.Windows.Forms.DataGridViewTextBoxColumn IntentDomain;
@@ -367,5 +404,6 @@
         private System.Windows.Forms.Button EditIntentButton;
         private System.Windows.Forms.Button RemoveIntentButton;
         private System.Windows.Forms.ToolStripMenuItem metadataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
     }
 }

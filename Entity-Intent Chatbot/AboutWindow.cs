@@ -3,13 +3,12 @@ using System.Windows.Forms;
 
 namespace aytimothy.EIChatbot.Editor {
     public partial class AboutWindow : Form, ILocalizedForm {
-        private MainWindow parentWindow;
+        public Form ParentForm;
 
-        public AboutWindow(MainWindow parent) {
+        public AboutWindow(Form parentForm) {
             InitializeComponent();
             InitializeLocalization();
-
-            parentWindow = parent;
+            ParentForm = parentForm;
         }
 
         public void InitializeLocalization() {
@@ -29,7 +28,7 @@ namespace aytimothy.EIChatbot.Editor {
         }
 
         private void AboutWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            parentWindow.Show();
+            ParentForm.Show();
         }
 
         private void CloseLabel_Click(object sender, System.EventArgs e) {
