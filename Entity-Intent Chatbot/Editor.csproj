@@ -61,6 +61,7 @@
     <Compile Include="DictionaryEditorWindow.Designer.cs">
       <DependentUpon>DictionaryEditorWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditorUtils.cs" />
     <Compile Include="EditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>

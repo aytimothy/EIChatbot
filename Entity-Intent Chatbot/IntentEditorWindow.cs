@@ -57,7 +57,7 @@ namespace aytimothy.EIChatbot.Editor {
     }
 
     public class IntentEditorWindowOnEndEditEvent : EventArgs {
-        public Intent NewData;
+        public Intent Data;
         public DialogResult DialogResult;
     }
 }

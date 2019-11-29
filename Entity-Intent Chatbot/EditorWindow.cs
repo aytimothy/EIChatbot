@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
@@ -15,10 +16,11 @@ namespace aytimothy.EIChatbot.Editor
 
         public Knowledgebase Data;
 
-        private List<DictionaryEditorWindow> dictionaryEditors = new List<DictionaryEditorWindow>();
-        private List<IntentEditorWindow> intentEditors = new List<IntentEditorWindow>();
+        public List<DictionaryEditorWindow> DictionaryEditors = new List<DictionaryEditorWindow>();
+        public List<IntentEditorWindow> IntentEditors = new List<IntentEditorWindow>();
 
-        public bool modified;
+        public bool modified = false;
+        public bool quitApplication = false;
 
         public EditorWindow(MainWindow rootWindow) {
             RootWindow = rootWindow;
@@ -77,7 +79,7 @@ namespace aytimothy.EIChatbot.Editor
 
                 UpdateTitle();
             }
-            catch (Exception exception) {
+            catch {
                 FileType = "";
                 FilePath = "";
                 UpdateTitle();
@@ -194,51 +196,166 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void EditorWindow_FormClosed(object sender, FormClosedEventArgs e) {
-            RootWindow.Show();
+            if (quitApplication)
+                Application.Exit();
+            if (!quitApplication)
+                RootWindow.Show();
         }
 
         private void CreateDictionaryButton_Click(object sender, EventArgs e) {
+            MessageBox.Show("Actually use the callback in DictionaryEditor.", "// todo.");
             DictionaryEditorWindow dictionaryEditorWindow = new DictionaryEditorWindow(this);
             dictionaryEditorWindow.Show();
-            dictionaryEditors.Add(dictionaryEditorWindow);
+            DictionaryEditors.Add(dictionaryEditorWindow);
             dictionaryEditorWindow.OnCompleteEvent += OnDictionaryEndEdit;
         }
 
         private void OnDictionaryEndEdit(object sender, DictionaryEditorWindowEndEditEvent e) {
             DictionaryEditorWindow _sender = (DictionaryEditorWindow)sender;
-            dictionaryEditors.Remove(_sender);
+            DictionaryEditors.Remove(_sender);
 
-            throw new NotImplementedException();
+            bool exists = false;
+            if (Data.Dictionaries.Length > 0) {
+                for (int i = 0; i < Data.Dictionaries.Length; i++) {
+                    if (Data.Dictionaries[i].GUID == e.Data.GUID) {
+                        exists = true;
+                        Data.Dictionaries[i] = e.Data;
+                    }
+                }
+            }
+            if (!exists) {
+                Array.Resize<Dictionary>(ref Data.Dictionaries, Data.Dictionaries.Length + 1);
+                Data.Dictionaries[Data.Dictionaries.Length - 1] = e.Data;
+            }
         }
 
         private void EditDictionaryButton_Click(object sender, EventArgs e) {
-            
+            if (DictionaryView.SelectedRows.Count <= 0) {
+                MessageBox.Show("Please select a row to edit...", "Error!");
+                return;
+            }
+
+            DataRow row = ((DataRowView)DictionaryView.SelectedRows[0].DataBoundItem).Row;
+            string guid = (string)row.ItemArray[0];
+
+            bool found = false;
+            foreach (Dictionary dictionary in Data.Dictionaries)
+                if (dictionary.GUID.ToUpper() == guid.ToUpper()) {
+                    DictionaryEditorWindow dictionaryEditor = new DictionaryEditorWindow(this, dictionary);
+                    dictionaryEditor.OnCompleteEvent += OnDictionaryEndEdit;
+                    DictionaryEditors.Add(dictionaryEditor);
+                    dictionaryEditor.Show();
+                    found = true;
+                    break;
+                }
+
+            if (!found) {
+                MessageBox.Show("Could not find dictionary with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+            }
         }
 
         private void RemoveDictionaryButton_Click(object sender, EventArgs e) {
+            if (DictionaryView.SelectedRows.Count <= 0) {
+                MessageBox.Show("Please select a row to edit...", "Error!");
+                return;
+            }
 
+            DataRow row = ((DataRowView)DictionaryView.SelectedRows[0].DataBoundItem).Row;
+            string guid = (string)row.ItemArray[0];
+
+            bool found = false;
+            int index = -1;
+            for (int i = 0; i < Data.Dictionaries.Length - 1; i++) {
+                if (Data.Dictionaries[i].GUID.ToUpper() == guid.ToUpper()) {
+                    found = true;
+                    index = i;
+                }
+                if (found)
+                    Data.Dictionaries[i - 1] = Data.Dictionaries[i];
+            }
+
+            if (!found)
+                MessageBox.Show("Could not find dictionary with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+            if (found)
+                Array.Resize<Dictionary>(ref Data.Dictionaries, Data.Dictionaries.Length - 1);
         }
 
         private void AddIntentButton_Click(object sender, EventArgs e) {
             IntentEditorWindow intentEditorWindow = new IntentEditorWindow(this);
             intentEditorWindow.Show();
-            intentEditors.Add(intentEditorWindow);
+            IntentEditors.Add(intentEditorWindow);
             intentEditorWindow.OnCompleteEvent += OnIntentEndEdit;
+            MessageBox.Show("Actually use the callback in IntentEditor.", "// todo.");
         }
 
         private void OnIntentEndEdit(object sender, IntentEditorWindowOnEndEditEvent e) {
             IntentEditorWindow _sender = (IntentEditorWindow) sender;
-            intentEditors.Remove(_sender);
+            IntentEditors.Remove(_sender);
 
-            throw new NotImplementedException();
+            bool exists = false;
+            if (Data.Intents.Length > 0) {
+                for (int i = 0; i < Data.Intents.Length; i++) {
+                    if (Data.Intents[i].GUID == e.Data.GUID) {
+                        exists = true;
+                        Data.Intents[i] = e.Data;
+                    }
+                }
+            }
+            if (!exists) {
+                Array.Resize<Intent>(ref Data.Intents, Data.Intents.Length + 1);
+                Data.Intents[Data.Intents.Length - 1] = e.Data;
+            }
         }
 
         private void EditIntentButton_Click(object sender, EventArgs e) {
+            if (DictionaryView.SelectedRows.Count <= 0) {
+                MessageBox.Show("Please select a row to edit...", "Error!");
+                return;
+            }
 
+            DataRow row = ((DataRowView)DictionaryView.SelectedRows[0].DataBoundItem).Row;
+            string guid = (string)row.ItemArray[0];
+
+            bool found = false;
+            foreach (Intent intent in Data.Intents)
+                if (intent.GUID.ToUpper() == guid.ToUpper()) {
+                    IntentEditorWindow intentEditor = new IntentEditorWindow(this, intent);
+                    intentEditor.OnCompleteEvent += OnIntentEndEdit;
+                    IntentEditors.Add(intentEditor);
+                    intentEditor.Show();
+                    found = true;
+                    break;
+                }
+
+            if (!found) {
+                MessageBox.Show("Could not find intent with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+            }
         }
 
         private void RemoveIntentButton_Click(object sender, EventArgs e) {
+            if (DictionaryView.SelectedRows.Count <= 0) {
+                MessageBox.Show("Please select a row to edit...", "Error!");
+                return;
+            }
 
+            DataRow row = ((DataRowView)DictionaryView.SelectedRows[0].DataBoundItem).Row;
+            string guid = (string)row.ItemArray[0];
+
+            bool found = false;
+            int index = -1;
+            for (int i = 0; i < Data.Intents.Length - 1; i++) {
+                if (Data.Intents[i].GUID.ToUpper() == guid.ToUpper()) {
+                    found = true;
+                    index = i;
+                }
+                if (found)
+                    Data.Intents[i - 1] = Data.Intents[i];
+            }
+
+            if (!found)
+                MessageBox.Show("Could not find intent with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+            if (found)
+                Array.Resize<Intent>(ref Data.Intents, Data.Intents.Length - 1);
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -299,7 +416,8 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e) {
-            
+            quitApplication = true;
+            Close();
         }
 
         private void metadataToolStripMenuItem_Click(object sender, EventArgs e) {

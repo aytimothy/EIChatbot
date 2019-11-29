@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using aytimothy.EIChatbot.Data;
 
 namespace aytimothy.EIChatbot.Editor {
     public partial class DictionaryEditorWindow : Form {
@@ -18,13 +19,24 @@ namespace aytimothy.EIChatbot.Editor {
         public DictionaryEditorWindow(EditorWindow parent) {
             InitializeComponent();
             ParentWindow = parent;
+
+            Data = new Dictionary();
+            UpdateView();
         }
 
         public DictionaryEditorWindow(EditorWindow parent, Dictionary existingData) {
             InitializeComponent();
             ParentWindow = parent;
 
-            throw new NotImplementedException();
+            Data = existingData;
+            UpdateView();
+        }
+
+        public void UpdateView() {
+            VocabularyView.Rows.Clear();
+
+            foreach (Vocabulary vocabulary in Data.Vocabulary)
+                VocabularyView.Rows.Add(new string[3] { vocabulary.GUID, vocabulary.Meaning, vocabulary.Synonyms.Length.ToString() });
         }
 
         private void VocabularyAddButton_Click(object sender, EventArgs e) {
@@ -34,32 +46,98 @@ namespace aytimothy.EIChatbot.Editor {
             vocabularyEditor.OnEndEdit += OnEndEdit;
         }
 
+        /// <summary>
+        /// Triggers when the vocabulary editing window is closed. It saves all the data back into the array.
+        /// </summary>
+        /// <remarks>
+        /// If the Vocabulary entry exists, it overrides the previous one.
+        /// Otherwise, it would add a new element to the array.
+        /// </remarks>
+        /// <param name="sender">The vocabulary editor window that just closed.</param>
+        /// <param name="e">Event data (the new vocabulary data) to replace the current data.</param>
         private void OnEndEdit(object sender, OnVocabularyEndEdit e) {
             VocabularyEditorWindow _sender = (VocabularyEditorWindow) sender;
             Editors.Remove(_sender);
 
-            throw new NotImplementedException();
+            bool exists = false;
+            if (Data.Vocabulary.Length > 0) {
+                for (int i = 0; i < Data.Vocabulary.Length; i++) {
+                    if (Data.Vocabulary[i].GUID == e.Data.GUID) {
+                        exists = true;
+                        Data.Vocabulary[i] = e.Data;
+                    }
+                }
+            }
+            if (!exists) {
+                Array.Resize<Vocabulary>(ref Data.Vocabulary, Data.Vocabulary.Length + 1);
+                Data.Vocabulary[Data.Vocabulary.Length - 1] = e.Data;
+            }
         }
 
         private void VocabularyEditButton_Click(object sender, EventArgs e) {
+            if (VocabularyView.SelectedRows.Count <= 0) {
+                MessageBox.Show("Please select a row to edit...", "Error!");
+                return;
+            }
 
+            DataRow row = ((DataRowView) VocabularyView.SelectedRows[0].DataBoundItem).Row;
+            string guid = (string) row.ItemArray[0];
+
+            bool found = false;
+            foreach (Vocabulary vocabulary in Data.Vocabulary)
+                if (vocabulary.GUID.ToUpper() == guid.ToUpper()) {
+                    VocabularyEditorWindow vocabularyEditor = new VocabularyEditorWindow(this, vocabulary);
+                    vocabularyEditor.OnEndEdit += OnEndEdit;
+                    Editors.Add(vocabularyEditor);
+                    vocabularyEditor.Show();
+                    found = true;
+                    break;
+                }
+
+            if (!found) {
+                MessageBox.Show("Could not find vocabulary with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+            }
         }
 
         private void VocabularyRemoveButton_Click(object sender, EventArgs e) {
+            if (VocabularyView.SelectedRows.Count <= 0) {
+                MessageBox.Show("Please select a row to remove...", "Error!");
+                return;
+            }
 
+            DataRow row = ((DataRowView)VocabularyView.SelectedRows[0].DataBoundItem).Row;
+            string guid = (string)row.ItemArray[0];
+
+            bool found = false;
+            int index = -1;
+            for (int i = 0; i < Data.Vocabulary.Length - 1; i++) {
+                if (Data.Vocabulary[i].GUID.ToUpper() == guid.ToUpper()) {
+                    found = true;
+                    index = i;
+                }
+                if (found)
+                    Data.Vocabulary[i - 1] = Data.Vocabulary[i];
+            }
+
+            if (!found)
+                MessageBox.Show("Could not find vocabulary with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+            if (found)
+                Array.Resize<Vocabulary>(ref Data.Vocabulary, Data.Vocabulary.Length - 1);
         }
 
         private void NameTextBox_TextChanged(object sender, EventArgs e) {
-
+            TextBox textbox = (TextBox) sender;
+            Data.Name = textbox.Text;
         }
 
         private void DescriptionTextBox_TextChanged(object sender, EventArgs e) {
-
+            TextBox textbox = (TextBox) sender;
+            Data.Description = textbox.Text;
         }
     }
 
     public class DictionaryEditorWindowEndEditEvent : EventArgs {
-        public Dictionary NewData;
+        public Dictionary Data;
         public DialogResult DialogResult;
     }
 }

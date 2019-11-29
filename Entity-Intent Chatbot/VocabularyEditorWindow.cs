@@ -28,5 +28,7 @@ namespace aytimothy.EIChatbot.Editor
         }
     }
 
-    public class OnVocabularyEndEdit : EventArgs { }
+    public class OnVocabularyEndEdit : EventArgs {
+        public Vocabulary Data;
+    }
 }
