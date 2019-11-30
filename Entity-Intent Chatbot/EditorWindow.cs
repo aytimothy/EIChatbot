@@ -246,13 +246,12 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void EditDictionaryButton_Click(object sender, EventArgs e) {
-            if (DictionaryView.SelectedRows.Count <= 0) {
-                MessageBox.Show("Please select a row to edit...", "Error!");
+            if (DictionaryView.CurrentCell == null) {
+                MessageBox.Show("Please select a cell.", "Error");
                 return;
             }
 
-            DataRow row = ((DataRowView)DictionaryView.SelectedRows[0].DataBoundItem).Row;
-            string guid = (string)row.ItemArray[0];
+            string guid = (string) DictionaryView.Rows[DictionaryView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             foreach (Dictionary dictionary in Data.Dictionaries)
@@ -271,20 +270,15 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void RemoveDictionaryButton_Click(object sender, EventArgs e) {
-            if (DictionaryView.SelectedRows.Count <= 0) {
-                MessageBox.Show("Please select a row to edit...", "Error!");
-                return;
-            }
-
-            DataRow row = ((DataRowView)DictionaryView.SelectedRows[0].DataBoundItem).Row;
-            string guid = (string)row.ItemArray[0];
+            string guid = (string)DictionaryView.Rows[DictionaryView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             int index = -1;
-            for (int i = 0; i < Data.Dictionaries.Length - 1; i++) {
+            for (int i = 0; i < Data.Dictionaries.Length; i++) {
                 if (Data.Dictionaries[i].GUID.ToUpper() == guid.ToUpper()) {
                     found = true;
                     index = i;
+                    continue;
                 }
                 if (found)
                     Data.Dictionaries[i - 1] = Data.Dictionaries[i];
@@ -294,6 +288,8 @@ namespace aytimothy.EIChatbot.Editor
                 MessageBox.Show("Could not find dictionary with GUID: \"" + guid.ToUpper() + "\".", "Error!");
             if (found)
                 Array.Resize<Dictionary>(ref Data.Dictionaries, Data.Dictionaries.Length - 1);
+
+            UpdateDictionaries();
         }
 
         private void AddIntentButton_Click(object sender, EventArgs e) {
@@ -327,13 +323,7 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void EditIntentButton_Click(object sender, EventArgs e) {
-            if (DictionaryView.SelectedRows.Count <= 0) {
-                MessageBox.Show("Please select a row to edit...", "Error!");
-                return;
-            }
-
-            DataRow row = ((DataRowView)DictionaryView.SelectedRows[0].DataBoundItem).Row;
-            string guid = (string)row.ItemArray[0];
+            string guid = (string)IntentView.Rows[IntentView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             foreach (Intent intent in Data.Intents)
@@ -352,20 +342,15 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void RemoveIntentButton_Click(object sender, EventArgs e) {
-            if (DictionaryView.SelectedRows.Count <= 0) {
-                MessageBox.Show("Please select a row to edit...", "Error!");
-                return;
-            }
-
-            DataRow row = ((DataRowView)DictionaryView.SelectedRows[0].DataBoundItem).Row;
-            string guid = (string)row.ItemArray[0];
+            string guid = (string)IntentView.Rows[IntentView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             int index = -1;
-            for (int i = 0; i < Data.Intents.Length - 1; i++) {
+            for (int i = 0; i < Data.Intents.Length; i++) {
                 if (Data.Intents[i].GUID.ToUpper() == guid.ToUpper()) {
                     found = true;
                     index = i;
+                    continue;
                 }
                 if (found)
                     Data.Intents[i - 1] = Data.Intents[i];
@@ -375,6 +360,8 @@ namespace aytimothy.EIChatbot.Editor
                 MessageBox.Show("Could not find intent with GUID: \"" + guid.ToUpper() + "\".", "Error!");
             if (found)
                 Array.Resize<Intent>(ref Data.Intents, Data.Intents.Length - 1);
+
+            UpdateIntents();
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {

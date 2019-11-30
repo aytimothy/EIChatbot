@@ -39,6 +39,10 @@ namespace aytimothy.EIChatbot.Editor {
 
             foreach (Vocabulary vocabulary in Data.Vocabulary)
                 VocabularyView.Rows.Add(new string[3] { vocabulary.GUID, vocabulary.Meaning, vocabulary.Synonyms.Length.ToString() });
+
+            GUIDTextBox.Text = Data.GUID;
+            NameTextBox.Text = Data.Name;
+            DescriptionTextBox.Text = Data.Description;
         }
 
         private void VocabularyAddButton_Click(object sender, EventArgs e) {
@@ -86,8 +90,7 @@ namespace aytimothy.EIChatbot.Editor {
                 return;
             }
 
-            DataRow row = ((DataRowView) VocabularyView.SelectedRows[0].DataBoundItem).Row;
-            string guid = (string) row.ItemArray[0];
+            string guid = (string)VocabularyView.Rows[VocabularyView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             foreach (Vocabulary vocabulary in Data.Vocabulary)
@@ -111,8 +114,7 @@ namespace aytimothy.EIChatbot.Editor {
                 return;
             }
 
-            DataRow row = ((DataRowView)VocabularyView.SelectedRows[0].DataBoundItem).Row;
-            string guid = (string)row.ItemArray[0];
+            string guid = (string)VocabularyView.Rows[VocabularyView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             int index = -1;
