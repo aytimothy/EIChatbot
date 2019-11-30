@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace aytimothy.EIChatbot.Editor
-{
-    public class EditorUtils {
+namespace aytimothy.EIChatbot.Editor {
+    public static class EditorUtils {
         /// <summary>
         /// Converts a byte array into a hexdecimal string.
         /// </summary>
@@ -14,7 +13,7 @@ namespace aytimothy.EIChatbot.Editor
         /// </remarks>
         /// <param name="bytes">The byte array to convert into string.</param>
         /// <returns>The resulting hexdecimal string.</returns>
-        public string ByteArrayToHexString(byte[] bytes) {
+        public static string ByteArrayToHexString(byte[] bytes) {
             StringBuilder hex = new StringBuilder(bytes.Length * 2);
             foreach (byte b in bytes)
                 hex.AppendFormat("{0:x2}", b);
@@ -29,7 +28,7 @@ namespace aytimothy.EIChatbot.Editor
         /// </remarks>
         /// <param name="hex">The string to convert into a byte array.</param>
         /// <returns>The resulting byte array.</returns>
-        public byte[] HexStringToByteArray(string hex) {
+        public static byte[] HexStringToByteArray(string hex) {
             int NumberChars = hex.Length;
             byte[] bytes = new byte[NumberChars / 2];
             for (int i = 0; i < NumberChars; i += 2)
@@ -44,7 +43,7 @@ namespace aytimothy.EIChatbot.Editor
         /// Should always be unique, at least 99.999999999999999999999999% of the time.
         /// </remarks>
         /// <returns>A byte array representing the current GUID.</returns>
-        public byte[] GenerateNextUUID() {
+        public static byte[] GenerateNextUUID() {
             SHA256 sha256 = SHA256.Create();
 
             DateTime timestamp = DateTime.Now;
@@ -55,7 +54,7 @@ namespace aytimothy.EIChatbot.Editor
             return result;
         }
 
-        public byte[] GenerateNextUUID(string salt) {
+        public static byte[] GenerateNextUUID(string salt) {
             SHA256 sha256 = SHA256.Create();
 
             DateTime timestamp = DateTime.Now;
@@ -67,7 +66,7 @@ namespace aytimothy.EIChatbot.Editor
 
         }
 
-        public byte[] GenerateNextUUID(byte[] salt) {
+        public static byte[] GenerateNextUUID(byte[] salt) {
             SHA256 sha256 = SHA256.Create();
 
             DateTime timestamp = DateTime.Now;
@@ -83,8 +82,8 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         // Aliases of GenerateNextUUID for naming conventions.
-        public byte[] GenerateNextGUID() => GenerateNextUUID();
-        public byte[] GenerateNextGUID(string salt) => GenerateNextUUID(salt);
-        public byte[] GenerateNextGUID(byte[] salt) => GenerateNextUUID(salt);
+        public static byte[] GenerateNextGUID() => GenerateNextUUID();
+        public static byte[] GenerateNextGUID(string salt) => GenerateNextUUID(salt);
+        public static byte[] GenerateNextGUID(byte[] salt) => GenerateNextUUID(salt);
     }
 }
