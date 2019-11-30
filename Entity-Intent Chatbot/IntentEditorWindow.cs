@@ -73,13 +73,7 @@ namespace aytimothy.EIChatbot.Editor {
         }
 
         private void EditShapeButton_Click(object sender, EventArgs e) {
-            if (ShapeView.SelectedRows.Count <= 0) {
-                MessageBox.Show("Please select a row to edit...", "Error!");
-                return;
-            }
-
-            DataRow row = ((DataRowView)ShapeView.SelectedRows[0].DataBoundItem).Row;
-            string guid = (string)row.ItemArray[0];
+            string guid = (string)ShapeView.Rows[ShapeView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             foreach (Shape shape in Data.Shapes)
@@ -93,27 +87,20 @@ namespace aytimothy.EIChatbot.Editor {
                 }
 
             if (!found) {
-                MessageBox.Show("Could not find intent with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+                MessageBox.Show("Could not find shape with GUID: \"" + guid.ToUpper() + "\".", "Error!");
             }
         }
 
         private void RemoveShapeButton_Click(object sender, EventArgs e) {
-            modified = true;
-
-            if (ShapeView.SelectedRows.Count <= 0) {
-                MessageBox.Show("Please select a row to edit...", "Error!");
-                return;
-            }
-
-            DataRow row = ((DataRowView)ShapeView.SelectedRows[0].DataBoundItem).Row;
-            string guid = (string)row.ItemArray[0];
+            string guid = (string)ShapeView.Rows[ShapeView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             int index = -1;
-            for (int i = 0; i < Data.Shapes.Length - 1; i++) {
+            for (int i = 0; i < Data.Shapes.Length; i++) {
                 if (Data.Shapes[i].GUID.ToUpper() == guid.ToUpper()) {
                     found = true;
                     index = i;
+                    continue;
                 }
                 if (found)
                     Data.Shapes[i - 1] = Data.Shapes[i];
@@ -123,6 +110,8 @@ namespace aytimothy.EIChatbot.Editor {
                 MessageBox.Show("Could not find shape with GUID: \"" + guid.ToUpper() + "\".", "Error!");
             if (found)
                 Array.Resize<Shape>(ref Data.Shapes, Data.Shapes.Length - 1);
+
+            UpdateFields();
         }
 
         private void DomainTextBox_TextChanged(object sender, EventArgs e) {

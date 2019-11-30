@@ -85,20 +85,15 @@ namespace aytimothy.EIChatbot.Editor {
         }
 
         private void VocabularyEditButton_Click(object sender, EventArgs e) {
-            if (VocabularyView.SelectedRows.Count <= 0) {
-                MessageBox.Show("Please select a row to edit...", "Error!");
-                return;
-            }
-
             string guid = (string)VocabularyView.Rows[VocabularyView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             foreach (Vocabulary vocabulary in Data.Vocabulary)
                 if (vocabulary.GUID.ToUpper() == guid.ToUpper()) {
-                    VocabularyEditorWindow vocabularyEditor = new VocabularyEditorWindow(this, vocabulary);
-                    vocabularyEditor.OnEndEdit += OnEndEdit;
-                    Editors.Add(vocabularyEditor);
-                    vocabularyEditor.Show();
+                    VocabularyEditorWindow intentEditor = new VocabularyEditorWindow(this, vocabulary);
+                    intentEditor.OnEndEdit += OnEndEdit;
+                    Editors.Add(intentEditor);
+                    intentEditor.Show();
                     found = true;
                     break;
                 }
@@ -109,28 +104,26 @@ namespace aytimothy.EIChatbot.Editor {
         }
 
         private void VocabularyRemoveButton_Click(object sender, EventArgs e) {
-            if (VocabularyView.SelectedRows.Count <= 0) {
-                MessageBox.Show("Please select a row to remove...", "Error!");
-                return;
-            }
-
             string guid = (string)VocabularyView.Rows[VocabularyView.CurrentCell.RowIndex].Cells[0].Value;
 
             bool found = false;
             int index = -1;
-            for (int i = 0; i < Data.Vocabulary.Length - 1; i++) {
+            for (int i = 0; i < Data.Vocabulary.Length; i++) {
                 if (Data.Vocabulary[i].GUID.ToUpper() == guid.ToUpper()) {
                     found = true;
                     index = i;
+                    continue;
                 }
                 if (found)
                     Data.Vocabulary[i - 1] = Data.Vocabulary[i];
             }
 
             if (!found)
-                MessageBox.Show("Could not find vocabulary with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+                MessageBox.Show("Could not find intent with GUID: \"" + guid.ToUpper() + "\".", "Error!");
             if (found)
                 Array.Resize<Vocabulary>(ref Data.Vocabulary, Data.Vocabulary.Length - 1);
+
+            UpdateViews();
         }
 
         private void NameTextBox_TextChanged(object sender, EventArgs e) {
