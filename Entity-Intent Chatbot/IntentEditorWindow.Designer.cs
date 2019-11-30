@@ -29,13 +29,16 @@
             this.DomainTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.GUIDTextBox = new System.Windows.Forms.TextBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.ShapeView = new System.Windows.Forms.DataGridView();
+            this.GUID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Shape = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AddShapeButton = new System.Windows.Forms.Button();
             this.EditShapeButton = new System.Windows.Forms.Button();
             this.RemoveShapeButton = new System.Windows.Forms.Button();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.IDTextBox = new System.Windows.Forms.TextBox();
+            this.IDLabel = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.ShapeView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -59,7 +62,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 32);
+            this.label2.Location = new System.Drawing.Point(12, 60);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(34, 13);
             this.label2.TabIndex = 2;
@@ -67,31 +70,37 @@
             // 
             // GUIDTextBox
             // 
-            this.GUIDTextBox.Location = new System.Drawing.Point(83, 29);
+            this.GUIDTextBox.Location = new System.Drawing.Point(83, 57);
             this.GUIDTextBox.Name = "GUIDTextBox";
             this.GUIDTextBox.ReadOnly = true;
             this.GUIDTextBox.Size = new System.Drawing.Size(501, 20);
             this.GUIDTextBox.TabIndex = 3;
             // 
-            // dataGridView1
+            // ShapeView
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ShapeView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ShapeView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.GUID,
             this.Shape});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 55);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(572, 150);
-            this.dataGridView1.TabIndex = 4;
+            this.ShapeView.Location = new System.Drawing.Point(11, 83);
+            this.ShapeView.Name = "ShapeView";
+            this.ShapeView.Size = new System.Drawing.Size(572, 150);
+            this.ShapeView.TabIndex = 4;
+            // 
+            // GUID
+            // 
+            this.GUID.HeaderText = "GUID";
+            this.GUID.Name = "GUID";
             // 
             // Shape
             // 
             this.Shape.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Shape.HeaderText = "Text";
+            this.Shape.HeaderText = "Shape";
             this.Shape.Name = "Shape";
             // 
             // AddShapeButton
             // 
-            this.AddShapeButton.Location = new System.Drawing.Point(12, 211);
+            this.AddShapeButton.Location = new System.Drawing.Point(12, 239);
             this.AddShapeButton.Name = "AddShapeButton";
             this.AddShapeButton.Size = new System.Drawing.Size(75, 23);
             this.AddShapeButton.TabIndex = 5;
@@ -101,7 +110,7 @@
             // 
             // EditShapeButton
             // 
-            this.EditShapeButton.Location = new System.Drawing.Point(93, 211);
+            this.EditShapeButton.Location = new System.Drawing.Point(93, 239);
             this.EditShapeButton.Name = "EditShapeButton";
             this.EditShapeButton.Size = new System.Drawing.Size(75, 23);
             this.EditShapeButton.TabIndex = 6;
@@ -109,9 +118,9 @@
             this.EditShapeButton.UseVisualStyleBackColor = true;
             this.EditShapeButton.Click += new System.EventHandler(this.EditShapeButton_Click);
             // 
-            // RemoveShpaeButton
+            // RemoveShapeButton
             // 
-            this.RemoveShapeButton.Location = new System.Drawing.Point(174, 211);
+            this.RemoveShapeButton.Location = new System.Drawing.Point(174, 239);
             this.RemoveShapeButton.Name = "RemoveShapeButton";
             this.RemoveShapeButton.Size = new System.Drawing.Size(75, 23);
             this.RemoveShapeButton.TabIndex = 7;
@@ -122,28 +131,48 @@
             // dataGridView2
             // 
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(12, 240);
+            this.dataGridView2.Location = new System.Drawing.Point(12, 268);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.Size = new System.Drawing.Size(571, 150);
             this.dataGridView2.TabIndex = 8;
+            // 
+            // IDTextBox
+            // 
+            this.IDTextBox.Location = new System.Drawing.Point(83, 32);
+            this.IDTextBox.Name = "IDTextBox";
+            this.IDTextBox.Size = new System.Drawing.Size(501, 20);
+            this.IDTextBox.TabIndex = 10;
+            this.IDTextBox.TextChanged += new System.EventHandler(this.IDTextBox_TextChanged);
+            // 
+            // IDLabel
+            // 
+            this.IDLabel.AutoSize = true;
+            this.IDLabel.Location = new System.Drawing.Point(12, 35);
+            this.IDLabel.Name = "IDLabel";
+            this.IDLabel.Size = new System.Drawing.Size(18, 13);
+            this.IDLabel.TabIndex = 9;
+            this.IDLabel.Text = "ID";
             // 
             // IntentEditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(595, 403);
+            this.ClientSize = new System.Drawing.Size(595, 430);
+            this.Controls.Add(this.IDTextBox);
+            this.Controls.Add(this.IDLabel);
             this.Controls.Add(this.dataGridView2);
             this.Controls.Add(this.RemoveShapeButton);
             this.Controls.Add(this.EditShapeButton);
             this.Controls.Add(this.AddShapeButton);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.ShapeView);
             this.Controls.Add(this.GUIDTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.DomainTextBox);
             this.Controls.Add(this.label1);
             this.Name = "IntentEditorWindow";
             this.Text = "IntentEditorWindow";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.IntentEditorWindow_FormClosed);
+            ((System.ComponentModel.ISupportInitialize)(this.ShapeView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -156,11 +185,14 @@
         private System.Windows.Forms.TextBox DomainTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox GUIDTextBox;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Shape;
+        private System.Windows.Forms.DataGridView ShapeView;
         private System.Windows.Forms.Button AddShapeButton;
         private System.Windows.Forms.Button EditShapeButton;
         private System.Windows.Forms.Button RemoveShapeButton;
         private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.TextBox IDTextBox;
+        private System.Windows.Forms.Label IDLabel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GUID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Shape;
     }
 }

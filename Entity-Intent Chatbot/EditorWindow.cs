@@ -78,11 +78,15 @@ namespace aytimothy.EIChatbot.Editor
                 }
 
                 UpdateTitle();
+                UpdateDictionaries();
+                UpdateIntents();
             }
             catch {
                 FileType = "";
                 FilePath = "";
                 UpdateTitle();
+                UpdateDictionaries();
+                UpdateIntents();
             }
         }
 
@@ -121,6 +125,8 @@ namespace aytimothy.EIChatbot.Editor
             }
 
             UpdateTitle();
+            UpdateDictionaries();
+            UpdateIntents();
         }
 
         public void SaveFile(string filePath) {
@@ -168,6 +174,10 @@ namespace aytimothy.EIChatbot.Editor
         private void UpdateDictionaries() {
             DictionaryView.Rows.Clear();
 
+            if (Data.Dictionaries == null)
+                return;
+            if (Data.Dictionaries.Length == null)
+                return;
             foreach (Dictionary dictionary in Data.Dictionaries)
                 DictionaryView.Rows.Add(dictionary.GUID, dictionary.Name, dictionary.Vocabulary.Length.ToString());
         }
@@ -175,6 +185,10 @@ namespace aytimothy.EIChatbot.Editor
         private void UpdateIntents() {
             IntentView.Rows.Clear();
 
+            if (Data.Intents == null)
+                return;
+            if (Data.Intents.Length == 0)
+                return;
             foreach (Intent intent in Data.Intents)
                 IntentView.Rows.Add(intent.GUID, intent.IntentID, intent.IntentDomain, intent.Shapes.Length.ToString());
         }
@@ -203,7 +217,6 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void CreateDictionaryButton_Click(object sender, EventArgs e) {
-            MessageBox.Show("Actually use the callback in DictionaryEditor.", "// todo.");
             DictionaryEditorWindow dictionaryEditorWindow = new DictionaryEditorWindow(this);
             dictionaryEditorWindow.Show();
             DictionaryEditors.Add(dictionaryEditorWindow);
@@ -227,6 +240,9 @@ namespace aytimothy.EIChatbot.Editor
                 Array.Resize<Dictionary>(ref Data.Dictionaries, Data.Dictionaries.Length + 1);
                 Data.Dictionaries[Data.Dictionaries.Length - 1] = e.Data;
             }
+
+            UpdateDictionaries();
+            modified = true;
         }
 
         private void EditDictionaryButton_Click(object sender, EventArgs e) {
@@ -285,7 +301,6 @@ namespace aytimothy.EIChatbot.Editor
             intentEditorWindow.Show();
             IntentEditors.Add(intentEditorWindow);
             intentEditorWindow.OnCompleteEvent += OnIntentEndEdit;
-            MessageBox.Show("Actually use the callback in IntentEditor.", "// todo.");
         }
 
         private void OnIntentEndEdit(object sender, IntentEditorWindowOnEndEditEvent e) {
@@ -305,6 +320,10 @@ namespace aytimothy.EIChatbot.Editor
                 Array.Resize<Intent>(ref Data.Intents, Data.Intents.Length + 1);
                 Data.Intents[Data.Intents.Length - 1] = e.Data;
             }
+
+            UpdateIntents();
+
+            modified = true;
         }
 
         private void EditIntentButton_Click(object sender, EventArgs e) {

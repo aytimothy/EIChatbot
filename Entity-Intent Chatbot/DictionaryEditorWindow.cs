@@ -15,13 +15,15 @@ namespace aytimothy.EIChatbot.Editor {
         public EventHandler<DictionaryEditorWindowEndEditEvent> OnCompleteEvent;
         public Dictionary Data;
         public List<VocabularyEditorWindow> Editors = new List<VocabularyEditorWindow>();
+        public bool modified;
 
         public DictionaryEditorWindow(EditorWindow parent) {
             InitializeComponent();
             ParentWindow = parent;
 
             Data = new Dictionary();
-            UpdateView();
+            Data.GUID = EditorUtils.ByteArrayToHexString(EditorUtils.GenerateNextGUID());
+            UpdateViews();
         }
 
         public DictionaryEditorWindow(EditorWindow parent, Dictionary existingData) {
@@ -29,10 +31,10 @@ namespace aytimothy.EIChatbot.Editor {
             ParentWindow = parent;
 
             Data = existingData;
-            UpdateView();
+            UpdateViews();
         }
 
-        public void UpdateView() {
+        public void UpdateViews() {
             VocabularyView.Rows.Clear();
 
             foreach (Vocabulary vocabulary in Data.Vocabulary)
@@ -72,6 +74,10 @@ namespace aytimothy.EIChatbot.Editor {
                 Array.Resize<Vocabulary>(ref Data.Vocabulary, Data.Vocabulary.Length + 1);
                 Data.Vocabulary[Data.Vocabulary.Length - 1] = e.Data;
             }
+
+            UpdateViews();
+
+            modified = true;
         }
 
         private void VocabularyEditButton_Click(object sender, EventArgs e) {
@@ -128,11 +134,26 @@ namespace aytimothy.EIChatbot.Editor {
         private void NameTextBox_TextChanged(object sender, EventArgs e) {
             TextBox textbox = (TextBox) sender;
             Data.Name = textbox.Text;
+            modified = true;
         }
 
         private void DescriptionTextBox_TextChanged(object sender, EventArgs e) {
             TextBox textbox = (TextBox) sender;
             Data.Description = textbox.Text;
+            modified = true;
+        }
+
+        private void DictionaryEditorWindow_FormClosed(object sender, FormClosedEventArgs e) {
+            if (modified)
+                OnCompleteEvent.Invoke(this, new DictionaryEditorWindowEndEditEvent() {
+                    Data = Data,
+                    DialogResult = DialogResult.OK
+                });
+            if (!modified)
+                OnCompleteEvent.Invoke(this, new DictionaryEditorWindowEndEditEvent() {
+                    Data = Data,
+                    DialogResult = DialogResult.Cancel
+                });
         }
     }
 

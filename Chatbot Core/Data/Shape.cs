@@ -7,6 +7,10 @@ namespace aytimothy.EIChatbot.Data {
         public Language Language;
         public Entity[] Entities = new Entity[0];
 
+        public Shape() {
+            ShapeString = "";
+        }
+
         public Shape(string text) {
             ShapeString = text;
         }

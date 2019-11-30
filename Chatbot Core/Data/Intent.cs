@@ -38,6 +38,10 @@ namespace aytimothy.EIChatbot.Data {
         /// </summary>
         public Shape[] Shapes = new Shape[0];
 
+        public Intent() {
+
+        }
+
         /// <summary>
         /// Creates a new empty intent.
         /// </summary>
@@ -57,8 +61,6 @@ namespace aytimothy.EIChatbot.Data {
                 IntentID = intentSplit[intentSplit.Length - 1];
                 IntentDomain = String.Join(".", intentSplit, 0, intentSplit.Length - 1);
             }
-
-            Shapes = new Shape[1] { new Shape(intentString) };
         }
     }
 }

@@ -19,14 +19,13 @@ namespace aytimothy.EIChatbot.Editor
             InitializeComponent();
             ParentWindow = parent;
             Data = new Shape("");
+            Data.GUID = EditorUtils.ByteArrayToHexString(EditorUtils.GenerateNextGUID());
         }
 
         public ShapeEditorWindow(IntentEditorWindow parent, Shape existingData) {
             InitializeComponent();
             ParentWindow = parent;
             Data = existingData;
-
-            throw new NotImplementedException();
         }
     }
 

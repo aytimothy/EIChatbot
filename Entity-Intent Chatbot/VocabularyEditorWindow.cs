@@ -19,6 +19,7 @@ namespace aytimothy.EIChatbot.Editor
             InitializeComponent();
             Parent = parentWindow;
             Data = new Vocabulary();
+            Data.GUID = EditorUtils.ByteArrayToHexString(EditorUtils.GenerateNextGUID());
         }
 
         public VocabularyEditorWindow(DictionaryEditorWindow parentWindow, Vocabulary existingData) {
