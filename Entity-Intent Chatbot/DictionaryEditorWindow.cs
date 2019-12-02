@@ -36,7 +36,6 @@ namespace aytimothy.EIChatbot.Editor {
 
         public void UpdateViews() {
             VocabularyView.Rows.Clear();
-
             foreach (Vocabulary vocabulary in Data.Vocabulary)
                 VocabularyView.Rows.Add(new string[3] { vocabulary.GUID, vocabulary.Meaning, vocabulary.Synonyms.Length.ToString() });
 

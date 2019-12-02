@@ -427,15 +427,16 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void metadataToolStripMenuItem_Click(object sender, EventArgs e) {
-            MessageBox.Show("Alert", "Not Implemented Yet >:(");
+            MessageBox.Show("Not Implemented Yet >:(", "Alert");
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
             AboutWindow aboutWindow = new AboutWindow(this);
+            aboutWindow.Show();
         }
 
         private void helpToolStripMenuItem1_Click(object sender, EventArgs e) {
-            MessageBox.Show("Alert", "Not Implemented Yet >:(");
+            MessageBox.Show("Not Implemented Yet >:(", "Alert");
         }
     }
 }

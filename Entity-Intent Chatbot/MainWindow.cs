@@ -43,7 +43,7 @@ namespace aytimothy.EIChatbot.Editor {
         }
 
         private void PreferencesButton_Click(object sender, EventArgs e) {
-            throw new NotImplementedException();
+            MessageBox.Show("Not Implemented Yet >:(", "Alert!");
         }
 
         private void QuitButton_Click(object sender, EventArgs e) {

@@ -13,5 +13,9 @@ namespace aytimothy.EIChatbot.Data {
     public class Vocabulary : ChatbotData {
         public string Meaning;
         public string[] Synonyms;
+
+        public Vocabulary() {
+            Synonyms = new string[0];
+        }
     }
 }
