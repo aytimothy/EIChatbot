@@ -176,7 +176,7 @@ namespace aytimothy.EIChatbot.Editor
 
             if (Data.Dictionaries == null)
                 return;
-            if (Data.Dictionaries.Length == null)
+            if (Data.Dictionaries.Length <= 0)
                 return;
             foreach (Dictionary dictionary in Data.Dictionaries)
                 DictionaryView.Rows.Add(dictionary.GUID, dictionary.Name, dictionary.Vocabulary.Length.ToString());
@@ -187,7 +187,7 @@ namespace aytimothy.EIChatbot.Editor
 
             if (Data.Intents == null)
                 return;
-            if (Data.Intents.Length == 0)
+            if (Data.Intents.Length <= 0)
                 return;
             foreach (Intent intent in Data.Intents)
                 IntentView.Rows.Add(intent.GUID, intent.IntentID, intent.IntentDomain, intent.Shapes.Length.ToString());

@@ -142,7 +142,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "VocabularyEditorWindow";
-            this.Text = "VocabularyEditorWindow";
+            this.Text = "Vocabulary Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.VocabularyEditorWindow_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.SynonymsDataView)).EndInit();
             this.ResumeLayout(false);

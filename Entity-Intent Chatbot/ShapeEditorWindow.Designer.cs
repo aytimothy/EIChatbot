@@ -31,22 +31,24 @@
             // NotImplementedLabel
             // 
             this.NotImplementedLabel.AutoEllipsis = true;
-            this.NotImplementedLabel.Location = new System.Drawing.Point(12, 9);
+            this.NotImplementedLabel.Location = new System.Drawing.Point(18, 14);
+            this.NotImplementedLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.NotImplementedLabel.Name = "NotImplementedLabel";
-            this.NotImplementedLabel.Size = new System.Drawing.Size(527, 334);
+            this.NotImplementedLabel.Size = new System.Drawing.Size(790, 514);
             this.NotImplementedLabel.TabIndex = 0;
             this.NotImplementedLabel.Text = "Not Implemented";
             this.NotImplementedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ShapeEditorWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(551, 352);
+            this.ClientSize = new System.Drawing.Size(826, 542);
             this.Controls.Add(this.NotImplementedLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "ShapeEditorWindow";
-            this.Text = "ShapeEditorWindow";
+            this.Text = "Shape Editor";
             this.ResumeLayout(false);
 
         }
