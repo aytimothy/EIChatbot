@@ -19,6 +19,10 @@ namespace aytimothy.EIChatbot.Data {
         /// This is the text to be matched for this block.
         /// </summary>
         public string RawContents;
+        /// <summary>
+        /// This is the original string for this block.
+        /// </summary>
+        public string SourceString;
 
         /// <summary>
         /// Is this entity an output? Does it return a value if its intent is the 
@@ -28,6 +32,10 @@ namespace aytimothy.EIChatbot.Data {
         /// Which output entity takes this value? (This matches OutputEntity.GUID)
         /// </summary>
         public string OutputEntityGUID; 
+        /// <summary>
+        /// The threshold for partial matches for this to be a valid match (requires that Type is 
+        /// </summary>
+        public float MatchThreshold;
 
         public Entity() {
             Type = EntityType.None;
