@@ -1,6 +1,6 @@
 ﻿namespace aytimothy.EIChatbot.Editor
 {
-    partial class ShapeEditorWindow
+    partial class OutputEntityEditorWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -25,19 +25,10 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.SuspendLayout();
-            // 
-            // ShapeEditorWindow
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(826, 542);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Name = "ShapeEditorWindow";
-            this.Text = "Shape Editor";
-            this.ResumeLayout(false);
-
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Text = "OutputEntityEditor";
         }
 
         #endregion

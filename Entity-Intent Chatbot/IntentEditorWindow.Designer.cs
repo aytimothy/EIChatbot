@@ -30,16 +30,21 @@
             this.label2 = new System.Windows.Forms.Label();
             this.GUIDTextBox = new System.Windows.Forms.TextBox();
             this.ShapeView = new System.Windows.Forms.DataGridView();
-            this.GUID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Shape = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ShapeGUID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ShapeString = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AddShapeButton = new System.Windows.Forms.Button();
             this.EditShapeButton = new System.Windows.Forms.Button();
             this.RemoveShapeButton = new System.Windows.Forms.Button();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.OutputEntityView = new System.Windows.Forms.DataGridView();
             this.IDTextBox = new System.Windows.Forms.TextBox();
             this.IDLabel = new System.Windows.Forms.Label();
+            this.RemoveOutputButton = new System.Windows.Forms.Button();
+            this.EditOutputButton = new System.Windows.Forms.Button();
+            this.AddOutputButton = new System.Windows.Forms.Button();
+            this.OutputGUID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.OutputName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.ShapeView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OutputEntityView)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -84,24 +89,24 @@
             // 
             this.ShapeView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ShapeView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.GUID,
-            this.Shape});
+            this.ShapeGUID,
+            this.ShapeString});
             this.ShapeView.Location = new System.Drawing.Point(16, 128);
             this.ShapeView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ShapeView.Name = "ShapeView";
             this.ShapeView.Size = new System.Drawing.Size(858, 231);
             this.ShapeView.TabIndex = 4;
             // 
-            // GUID
+            // ShapeGUID
             // 
-            this.GUID.HeaderText = "GUID";
-            this.GUID.Name = "GUID";
+            this.ShapeGUID.HeaderText = "GUID";
+            this.ShapeGUID.Name = "ShapeGUID";
             // 
-            // Shape
+            // ShapeString
             // 
-            this.Shape.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Shape.HeaderText = "Shape";
-            this.Shape.Name = "Shape";
+            this.ShapeString.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ShapeString.HeaderText = "Shape";
+            this.ShapeString.Name = "ShapeString";
             // 
             // AddShapeButton
             // 
@@ -136,14 +141,17 @@
             this.RemoveShapeButton.UseVisualStyleBackColor = true;
             this.RemoveShapeButton.Click += new System.EventHandler(this.RemoveShapeButton_Click);
             // 
-            // dataGridView2
+            // OutputEntityView
             // 
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(18, 412);
-            this.dataGridView2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(856, 231);
-            this.dataGridView2.TabIndex = 8;
+            this.OutputEntityView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.OutputEntityView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.OutputGUID,
+            this.OutputName});
+            this.OutputEntityView.Location = new System.Drawing.Point(18, 412);
+            this.OutputEntityView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.OutputEntityView.Name = "OutputEntityView";
+            this.OutputEntityView.Size = new System.Drawing.Size(856, 231);
+            this.OutputEntityView.TabIndex = 8;
             // 
             // IDTextBox
             // 
@@ -164,14 +172,60 @@
             this.IDLabel.TabIndex = 9;
             this.IDLabel.Text = "ID";
             // 
+            // RemoveOutputButton
+            // 
+            this.RemoveOutputButton.Location = new System.Drawing.Point(261, 653);
+            this.RemoveOutputButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.RemoveOutputButton.Name = "RemoveOutputButton";
+            this.RemoveOutputButton.Size = new System.Drawing.Size(112, 35);
+            this.RemoveOutputButton.TabIndex = 13;
+            this.RemoveOutputButton.Text = "Remove";
+            this.RemoveOutputButton.UseVisualStyleBackColor = true;
+            this.RemoveOutputButton.Click += new System.EventHandler(this.RemoveOutputButton_Click);
+            // 
+            // EditOutputButton
+            // 
+            this.EditOutputButton.Location = new System.Drawing.Point(140, 653);
+            this.EditOutputButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.EditOutputButton.Name = "EditOutputButton";
+            this.EditOutputButton.Size = new System.Drawing.Size(112, 35);
+            this.EditOutputButton.TabIndex = 12;
+            this.EditOutputButton.Text = "Edit";
+            this.EditOutputButton.UseVisualStyleBackColor = true;
+            this.EditOutputButton.Click += new System.EventHandler(this.EditOutputButton_Click);
+            // 
+            // AddOutputButton
+            // 
+            this.AddOutputButton.Location = new System.Drawing.Point(18, 653);
+            this.AddOutputButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AddOutputButton.Name = "AddOutputButton";
+            this.AddOutputButton.Size = new System.Drawing.Size(112, 35);
+            this.AddOutputButton.TabIndex = 11;
+            this.AddOutputButton.Text = "Add";
+            this.AddOutputButton.UseVisualStyleBackColor = true;
+            this.AddOutputButton.Click += new System.EventHandler(this.AddOutputButton_Click);
+            // 
+            // OutputGUID
+            // 
+            this.OutputGUID.HeaderText = "GUID";
+            this.OutputGUID.Name = "OutputGUID";
+            // 
+            // OutputName
+            // 
+            this.OutputName.HeaderText = "Name";
+            this.OutputName.Name = "OutputName";
+            // 
             // IntentEditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(892, 662);
+            this.ClientSize = new System.Drawing.Size(892, 701);
+            this.Controls.Add(this.RemoveOutputButton);
+            this.Controls.Add(this.EditOutputButton);
+            this.Controls.Add(this.AddOutputButton);
             this.Controls.Add(this.IDTextBox);
             this.Controls.Add(this.IDLabel);
-            this.Controls.Add(this.dataGridView2);
+            this.Controls.Add(this.OutputEntityView);
             this.Controls.Add(this.RemoveShapeButton);
             this.Controls.Add(this.EditShapeButton);
             this.Controls.Add(this.AddShapeButton);
@@ -185,7 +239,7 @@
             this.Text = "Intent Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.IntentEditorWindow_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.ShapeView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OutputEntityView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -201,10 +255,15 @@
         private System.Windows.Forms.Button AddShapeButton;
         private System.Windows.Forms.Button EditShapeButton;
         private System.Windows.Forms.Button RemoveShapeButton;
-        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.DataGridView OutputEntityView;
         private System.Windows.Forms.TextBox IDTextBox;
         private System.Windows.Forms.Label IDLabel;
-        private System.Windows.Forms.DataGridViewTextBoxColumn GUID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Shape;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ShapeGUID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ShapeString;
+        private System.Windows.Forms.Button RemoveOutputButton;
+        private System.Windows.Forms.Button EditOutputButton;
+        private System.Windows.Forms.Button AddOutputButton;
+        private System.Windows.Forms.DataGridViewTextBoxColumn OutputGUID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn OutputName;
     }
 }

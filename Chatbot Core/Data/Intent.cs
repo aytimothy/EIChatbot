@@ -37,6 +37,10 @@ namespace aytimothy.EIChatbot.Data {
         /// This is a list of text patterns that fits this intent.
         /// </summary>
         public Shape[] Shapes = new Shape[0];
+        /// <summary>
+        /// This is a list of entities shared by all the shapes.
+        /// </summary>
+        public OutputEntity[] Outputs = new OutputEntity[0];
 
         public Intent() {
 

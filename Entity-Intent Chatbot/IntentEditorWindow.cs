@@ -15,6 +15,7 @@ namespace aytimothy.EIChatbot.Editor {
         public EventHandler<IntentEditorWindowOnEndEditEvent> OnCompleteEvent;
         public Intent Data;
         public List<ShapeEditorWindow> Editors = new List<ShapeEditorWindow>();
+        public List<OutputEntityEditorWindow> Editors2 = new List<OutputEntityEditorWindow>();
         public bool modified;
 
         public IntentEditorWindow(EditorWindow parent) {
@@ -38,6 +39,9 @@ namespace aytimothy.EIChatbot.Editor {
             ShapeView.Rows.Clear();
             foreach (Shape shape in Data.Shapes)
                 ShapeView.Rows.Add(new string[] {shape.GUID, shape.ShapeString});
+            OutputEntityView.Rows.Clear();
+            foreach (OutputEntity outputEntity in Data.Outputs)
+                OutputEntityView.Rows.Add(new string[] {outputEntity.GUID, outputEntity.Name});
 
             GUIDTextBox.Text = Data.GUID;
             DomainTextBox.Text = Data.IntentDomain;
@@ -70,6 +74,8 @@ namespace aytimothy.EIChatbot.Editor {
                 Array.Resize<Shape>(ref Data.Shapes, Data.Shapes.Length + 1);
                 Data.Shapes[Data.Shapes.Length - 1] = e.Data;
             }
+
+            UpdateFields();
         }
 
         private void EditShapeButton_Click(object sender, EventArgs e) {
@@ -127,6 +133,11 @@ namespace aytimothy.EIChatbot.Editor {
         }
 
         private void IntentEditorWindow_FormClosed(object sender, FormClosedEventArgs e) {
+            foreach (ShapeEditorWindow Editor in Editors)
+                Editor.Close();
+            foreach (OutputEntityEditorWindow Editor in Editors2)
+                Editor.Close();
+
             if (modified)
                 OnCompleteEvent.Invoke(this, new IntentEditorWindowOnEndEditEvent() {
                     Data = Data,
@@ -137,6 +148,78 @@ namespace aytimothy.EIChatbot.Editor {
                     Data = Data,
                     DialogResult = DialogResult.Cancel
                 });
+        }
+
+        private void AddOutputButton_Click(object sender, EventArgs e) {
+            OutputEntityEditorWindow outputEntityEditorWindow = new OutputEntityEditorWindow(this);
+            outputEntityEditorWindow.Show();
+            outputEntityEditorWindow.OnEndEdit += Output_OnEndEdit;
+            Editors2.Add(outputEntityEditorWindow);
+        }
+
+        public void Output_OnEndEdit(object sender, OnOutputEntityEndEdit e) {
+            OutputEntityEditorWindow _sender = (OutputEntityEditorWindow)sender;
+            Editors2.Remove(_sender);
+
+            if (e.DialogResult != DialogResult.OK)
+                return;
+
+            modified = true;
+            bool exists = false;
+            for (int i = 0; i < Data.Outputs.Length; i++)
+                if (Data.Outputs[i].GUID.ToUpper() == e.Data.GUID.ToUpper()) {
+                    exists = true;
+                    Data.Outputs[i] = e.Data;
+                }
+
+            if (!exists) {
+                Array.Resize<OutputEntity>(ref Data.Outputs, Data.Outputs.Length + 1);
+                Data.Outputs[Data.Outputs.Length - 1] = e.Data;
+            }
+
+            UpdateFields();
+        }
+
+        private void EditOutputButton_Click(object sender, EventArgs e) {
+            string guid = (string)OutputEntityView.Rows[OutputEntityView.CurrentCell.RowIndex].Cells[0].Value;
+
+            bool found = false;
+            foreach (OutputEntity output in Data.Outputs)
+                if (output.GUID.ToUpper() == guid.ToUpper()) {
+                    OutputEntityEditorWindow outputEditor = new OutputEntityEditorWindow(this, output);
+                    outputEditor.OnEndEdit += Output_OnEndEdit;
+                    Editors2.Add(outputEditor);
+                    outputEditor.Show();
+                    found = true;
+                    break;
+                }
+
+            if (!found) {
+                MessageBox.Show("Could not find output with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+            }
+        }
+
+        private void RemoveOutputButton_Click(object sender, EventArgs e) {
+            string guid = (string)OutputEntityView.Rows[OutputEntityView.CurrentCell.RowIndex].Cells[0].Value;
+
+            bool found = false;
+            int index = -1;
+            for (int i = 0; i < Data.Outputs.Length; i++) {
+                if (Data.Outputs[i].GUID.ToUpper() == guid.ToUpper()) {
+                    found = true;
+                    index = i;
+                    continue;
+                }
+                if (found)
+                    Data.Outputs[i - 1] = Data.Outputs[i];
+            }
+
+            if (!found)
+                MessageBox.Show("Could not find output entity with GUID: \"" + guid.ToUpper() + "\".", "Error!");
+            if (found)
+                Array.Resize<OutputEntity>(ref Data.Outputs, Data.Outputs.Length - 1);
+
+            UpdateFields();
         }
     }
 

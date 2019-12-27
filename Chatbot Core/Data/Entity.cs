@@ -24,7 +24,10 @@ namespace aytimothy.EIChatbot.Data {
         /// Is this entity an output? Does it return a value if its intent is the 
         /// </summary>
         public bool IsOutputEntity;
-        public string OutputEntityName; 
+        /// <summary>
+        /// Which output entity takes this value? (This matches OutputEntity.GUID)
+        /// </summary>
+        public string OutputEntityGUID; 
 
         public Entity() {
             Type = EntityType.None;

@@ -57,6 +57,7 @@
     <Compile Include="Data\Language.cs" />
     <Compile Include="Data\MatchEntity.cs" />
     <Compile Include="Data\OptionalEntity.cs" />
+    <Compile Include="Data\OutputEntity.cs" />
     <Compile Include="Data\PartialMatchEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\Shape.cs" />
