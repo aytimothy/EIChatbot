@@ -50,8 +50,8 @@ namespace aytimothy.EIChatbot.Editor {
 
         private void AddShapeButton_Click(object sender, EventArgs e) {
             ShapeEditorWindow shapeEditorWindow = new ShapeEditorWindow(this);
-            shapeEditorWindow.Show();
             shapeEditorWindow.OnEndEdit += Shape_OnEndEdit;
+            shapeEditorWindow.Show();
             Editors.Add(shapeEditorWindow);
         }
 

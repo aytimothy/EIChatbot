@@ -32,10 +32,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(826, 542);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "ShapeEditorWindow";
             this.Text = "Shape Editor";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ShapeEditorWindow_FormClosed);
+            this.Load += new System.EventHandler(this.ShapeEditorWindow_Load);
             this.ResumeLayout(false);
 
         }

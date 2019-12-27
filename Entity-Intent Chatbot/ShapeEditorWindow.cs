@@ -14,6 +14,11 @@ namespace aytimothy.EIChatbot.Editor
         public IntentEditorWindow ParentWindow;
         public EventHandler<OnShapeEndEdit> OnEndEdit;
         public Shape Data;
+        private bool modified;
+
+        private void ShapeEditorWindow_Load(object sender, EventArgs e) {
+            modified = true;
+        }
 
         public ShapeEditorWindow(IntentEditorWindow parent) {
             InitializeComponent();
@@ -26,6 +31,14 @@ namespace aytimothy.EIChatbot.Editor
             InitializeComponent();
             ParentWindow = parent;
             Data = existingData;
+        }
+
+        private void ShapeEditorWindow_FormClosed(object sender, FormClosedEventArgs e) {
+            OnShapeEndEdit result = new OnShapeEndEdit() {
+                Data = Data,
+                DialogResult = (modified) ? DialogResult.OK : DialogResult.Cancel
+            };
+            OnEndEdit.Invoke(this, result);
         }
     }
 
