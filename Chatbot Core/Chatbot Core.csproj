@@ -59,6 +59,7 @@
     <Compile Include="Data\OptionalEntity.cs" />
     <Compile Include="Data\OutputEntity.cs" />
     <Compile Include="Data\PartialMatchEntity.cs" />
+    <Compile Include="Data\SpecialWildcardType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\Shape.cs" />
     <Compile Include="Data\Vocabulary.cs" />

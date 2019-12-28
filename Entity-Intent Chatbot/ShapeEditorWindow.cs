@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -376,8 +377,155 @@ namespace aytimothy.EIChatbot.Editor
             if (isSetup)
                 return;
 
+            switch ((EntityType) TypeComboBox.SelectedIndex) {
+                case EntityType.None:
+                    return;
+                case EntityType.Optional:
+                    return;
+                case EntityType.PartialMatch:
+                    return;
+                case EntityType.DirectMatch:
+                    return;
+                case EntityType.Match:
+                    return;
+                case EntityType.Wildcard:
+                    return;
+                case EntityType.DictionaryWildcard:
+                    Data.OutputEntityGUID = Root.ParentWindow.ParentWindow.Data.Dictionaries[MatchStringDictionarySourceComboBox.SelectedIndex].GUID;
+                    break;
+                case EntityType.SpecialWildcard:
+                    switch ((SpecialWildcardType) MatchStringDictionarySourceComboBox.SelectedIndex) {
+                        case SpecialWildcardType.None:
+                            Data.RawContents = "S:NONE";
+                            break;
+                        case SpecialWildcardType.Date:
+                            Data.RawContents = "S:DATE";
+                            break;
+                        case SpecialWildcardType.DateInterval:
+                            Data.RawContents = "S:DTIN";
+                            break;
+                        case SpecialWildcardType.Time:
+                            Data.RawContents = "S:TIME";
+                            break;
+                        case SpecialWildcardType.TimeInterval:
+                            Data.RawContents = "S:TIIN";
+                            break;
+                        case SpecialWildcardType.DateTime:
+                            Data.RawContents = "S:DTTI";
+                            break;
+                        case SpecialWildcardType.TimeSpan:
+                            Data.RawContents = "S:TISP";
+                            break;
+                        case SpecialWildcardType.Number:
+                            Data.RawContents = "S:NUMB";
+                            break;
+                        case SpecialWildcardType.Ordinal:
+                            Data.RawContents = "S:ORDI";
+                            break;
+                        case SpecialWildcardType.Integer:
+                            Data.RawContents = "S:INTR";
+                            break;
+                        case SpecialWildcardType.NumberSequence:
+                            Data.RawContents = "S:NUSQ";
+                            break;
+                        case SpecialWildcardType.FlightNumber:
+                            Data.RawContents = "S:FLNU";
+                            break;
+                        case SpecialWildcardType.AnyUnit:
+                            Data.RawContents = "S:ANUN";
+                            break;
+                        case SpecialWildcardType.AreaUnit:
+                            Data.RawContents = "S:ARUN";
+                            break;
+                        case SpecialWildcardType.CurrencyUnit:
+                            Data.RawContents = "S:CUUN";
+                            break;
+                        case SpecialWildcardType.LengthUnit:
+                            Data.RawContents = "S:LGUN";
+                            break;
+                        case SpecialWildcardType.SpeedUnit:
+                            Data.RawContents = "S:SPUN";
+                            break;
+                        case SpecialWildcardType.VolumeUnit:
+                            Data.RawContents = "S:VLUN";
+                            break;
+                        case SpecialWildcardType.WeightUnit:
+                            Data.RawContents = "S:WTUN";
+                            break;
+                        case SpecialWildcardType.InformationUnit:
+                            Data.RawContents = "S:INUN";
+                            break;
+                        case SpecialWildcardType.TemperatureUnit:
+                            Data.RawContents = "S:TMUN";
+                            break;
+                        case SpecialWildcardType.DurationUnit:
+                            Data.RawContents = "S:DRUN";
+                            break;
+                        case SpecialWildcardType.AgeUnit:
+                            Data.RawContents = "S:AGUN";
+                            break;
+                        case SpecialWildcardType.CurrencyName:
+                            Data.RawContents = "S:CUNM";
+                            break;
+                        case SpecialWildcardType.UnitName:
+                            Data.RawContents = "S:UNNM";
+                            break;
+                        case SpecialWildcardType.Address:
+                            Data.RawContents = "S:ADDR";
+                            break;
+                        case SpecialWildcardType.StreetAddress:
+                            Data.RawContents = "S:STAD";
+                            break;
+                        case SpecialWildcardType.ZIPCode:
+                            Data.RawContents = "S:ZIPC";
+                            break;
+                        case SpecialWildcardType.Country:
+                            Data.RawContents = "S:COUN";
+                            break;
+                        case SpecialWildcardType.City:
+                            Data.RawContents = "S:CITY";
+                            break;
+                        case SpecialWildcardType.District:
+                            Data.RawContents = "S:DIST";
+                            break;
+                        case SpecialWildcardType.CountryCode:
+                            Data.RawContents = "S:COCO";
+                            break;
+                        case SpecialWildcardType.Language:
+                            Data.RawContents = "S:LANG";
+                            break;
+                        case SpecialWildcardType.LanguageCode:
+                            Data.RawContents = "S:LACO";
+                            break;
+                        case SpecialWildcardType.Airport:
+                            Data.RawContents = "S:AIRP";
+                            break;
+                        case SpecialWildcardType.Coordinate:
+                            Data.RawContents = "S:CORD";
+                            break;
+                        case SpecialWildcardType.CoordinateShortcode:
+                            Data.RawContents = "S:COSC";
+                            break;
+                        case SpecialWildcardType.Email:
+                            Data.RawContents = "S:MAIL";
+                            break;
+                        case SpecialWildcardType.PhoneNumber:
+                            Data.RawContents = "S:PHNU";
+                            break;
+                        case SpecialWildcardType.Color:
+                            Data.RawContents = "S:COLO";
+                            break;
+                        case SpecialWildcardType.URL:
+                            Data.RawContents = "S:WURL";
+                            break;
+                        default:
+                            Data.RawContents = "S:#" + MatchStringDictionarySourceComboBox.SelectedIndex.ToString("000");
+                            break;
+                    }
+                    break;
+            }
+
             modified = true;
-            // todo: Convert index to GUID.
         }
 
         private void IsOutputEntityCheckBoxOnCheckedChanged(object sender, EventArgs e) {
@@ -422,13 +570,13 @@ namespace aytimothy.EIChatbot.Editor
                     MatchStringLabel.Visible = true;
                     MatchStringDictionarySourceComboBox.Visible = true;
                     MatchStringSourceTextBox.Visible = false;
-                    // todo: Setup combo box for existing dictionaries
+                    SetupComboBoxForDictionaries();
                     break;
                 case EntityType.SpecialWildcard:
                     MatchStringLabel.Visible = true;
                     MatchStringDictionarySourceComboBox.Visible = true;
                     MatchStringSourceTextBox.Visible = false;
-                    // todo: Setup combo box for special wildcards
+                    SetupComboBoxForWildcards();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -440,6 +588,62 @@ namespace aytimothy.EIChatbot.Editor
             Root.Modified = true;
             Data.Type = (EntityType) TypeComboBox.SelectedIndex;
 
+            void SetupComboBoxForDictionaries() {
+                List<object> DictionaryNames = new List<object>();
+                foreach (Dictionary dictionary in Root.ParentWindow.ParentWindow.Data.Dictionaries)
+                    DictionaryNames.Add(dictionary.Name);
+                MatchStringDictionarySourceComboBox.Items.Clear();
+                MatchStringDictionarySourceComboBox.Items.AddRange(DictionaryNames.ToArray());
+            }
+
+            void SetupComboBoxForWildcards() {
+                isSetup = true;
+                MatchStringDictionarySourceComboBox.Items.Clear();
+                MatchStringDictionarySourceComboBox.Items.AddRange(new object[] {
+                    "None",
+                    "Date",
+                    "Date Interval",
+                    "Time",
+                    "Time Interval",
+                    "DateTime",
+                    "TimeSpan",
+                    "Number",
+                    "Ordinal",
+                    "Integer",
+                    "Number Sequence",
+                    "Flight Number",   
+                    "AnyUnit",
+                    "AreaUnit",
+                    "Currency Unit",
+                    "Length Unit",
+                    "Speed Unit",
+                    "Volume Unit",
+                    "Weight Unit",
+                    "Information Unit",
+                    "Temperature Unit",
+                    "Duration Unit",
+                    "AgeUnit",
+                    "CurrencyName",
+                    "UnitName",
+                    "Address",
+                    "Street Address",
+                    "ZIPCode",
+                    "Country",
+                    "City",           
+                    "District",       
+                    "Country Code",
+                    "Language",
+                    "Language Code",
+                    "Airport",
+                    "Coordinate",
+                    "Coordinate Shortcode",
+                    "Email",
+                    "PhoneNumber",
+                    "Color",
+                    "URL"
+                });
+                isSetup = false;
+            }
         }
         private void PartialThresholdTextBoxOnTextChanged(object sender, EventArgs e) {
             if (isSetup)
