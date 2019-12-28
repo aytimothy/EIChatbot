@@ -10,7 +10,7 @@ namespace aytimothy.EIChatbot.Data {
     /// It is like a single block out of the whole sentence to be matched.
     /// </remarks>
     [Serializable]
-    public abstract class Entity {
+    public class Entity {
         /// <summary>
         /// What type of entity is this; what is the match criteria?
         /// </summary>
