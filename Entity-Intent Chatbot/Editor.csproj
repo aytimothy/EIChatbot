@@ -56,6 +56,7 @@
     <Compile Include="AboutWindow.Designer.cs">
       <DependentUpon>AboutWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\English.cs" />
     <Compile Include="DictionaryEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>

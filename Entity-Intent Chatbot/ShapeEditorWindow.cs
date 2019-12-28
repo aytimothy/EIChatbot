@@ -82,6 +82,11 @@ namespace aytimothy.EIChatbot.Editor
                 return;
         }
 
+        private void ShapeText_LostFocus(object sender, EventArgs e) {
+            if (isSetup)
+                return;
+        }
+
         private void EntityTabControl_TabIndexChanged(object sender, EventArgs e) {
             if (isSetup)
                 return;
@@ -203,111 +208,118 @@ namespace aytimothy.EIChatbot.Editor
             Page.UseVisualStyleBackColor = true;
 
             PartialThresholdLabel.AutoSize = true;
-            PartialThresholdLabel.Location = new System.Drawing.Point(6, 212);
+            PartialThresholdLabel.Location = new Point(4, 138);
+            PartialThresholdLabel.Margin = new Padding(2, 0, 2, 0);
             PartialThresholdLabel.Name = "TemplatePartialThresholdLabel";
-            PartialThresholdLabel.Size = new System.Drawing.Size(127, 20);
+            PartialThresholdLabel.Size = new Size(86, 13);
             PartialThresholdLabel.TabIndex = 11;
             PartialThresholdLabel.Text = "Partial Threshold";
-            
-            PartialThresholdTextBox.Location = new System.Drawing.Point(170, 209);
+
+            PartialThresholdTextBox.Location = new Point(113, 136);
+            PartialThresholdTextBox.Margin = new Padding(2, 2, 2, 2);
             PartialThresholdTextBox.Name = "TemplatePartialThresholdTextBox";
-            PartialThresholdTextBox.Size = new System.Drawing.Size(614, 26);
+            PartialThresholdTextBox.Size = new Size(407, 20);
             PartialThresholdTextBox.TabIndex = 10;
             PartialThresholdTextBox.TextChanged += PartialThresholdTextBoxOnTextChanged;
-            
+
             OutputEntitySlotComboBox.FormattingEnabled = true;
             OutputEntitySlotComboBox.Items.AddRange(new object[] {
             "None",
             "Optional",
-            "PartialMatch",
-            "DirectMatch",
+            "Partial Match",
+            "Direct Match",
             "Match",
             "Wildcard",
-            "DictionaryWildcard"});
-            OutputEntitySlotComboBox.Location = new System.Drawing.Point(170, 175);
+            "Dictionary Wildcard",
+            "Special Wildcard"});
+            OutputEntitySlotComboBox.Location = new Point(113, 114);
+            OutputEntitySlotComboBox.Margin = new Padding(2, 2, 2, 2);
             OutputEntitySlotComboBox.Name = "TemplateOutputEntitySlotComboBox";
-            OutputEntitySlotComboBox.Size = new System.Drawing.Size(614, 28);
+            OutputEntitySlotComboBox.Size = new Size(407, 21);
             OutputEntitySlotComboBox.TabIndex = 9;
             OutputEntitySlotComboBox.SelectedIndexChanged += OutputEntitySlotComboBoxOnSelectedValueChanged;
-            
+
             OutputEntitySlotLabel.AutoSize = true;
-            OutputEntitySlotLabel.Location = new System.Drawing.Point(6, 178);
+            OutputEntitySlotLabel.Location = new Point(4, 116);
+            OutputEntitySlotLabel.Margin = new Padding(2, 0, 2, 0);
             OutputEntitySlotLabel.Name = "TemplateOutputEntitySlotLabel";
-            OutputEntitySlotLabel.Size = new System.Drawing.Size(134, 20);
+            OutputEntitySlotLabel.Size = new Size(89, 13);
             OutputEntitySlotLabel.TabIndex = 8;
             OutputEntitySlotLabel.Text = "Output Entity Slot";
-            
+
             IsOutputEntityCheckBox.AutoSize = true;
-            IsOutputEntityCheckBox.Location = new System.Drawing.Point(10, 144);
+            IsOutputEntityCheckBox.Location = new Point(7, 94);
+            IsOutputEntityCheckBox.Margin = new Padding(2, 2, 2, 2);
             IsOutputEntityCheckBox.Name = "TemplateIsOutputEntityCheckBox";
-            IsOutputEntityCheckBox.Size = new System.Drawing.Size(138, 24);
+            IsOutputEntityCheckBox.Size = new Size(98, 17);
             IsOutputEntityCheckBox.TabIndex = 7;
             IsOutputEntityCheckBox.Text = "Is Output Entity";
             IsOutputEntityCheckBox.UseVisualStyleBackColor = true;
             IsOutputEntityCheckBox.CheckedChanged += IsOutputEntityCheckBoxOnCheckedChanged;
-            
+
             MatchStringDictionarySourceComboBox.FormattingEnabled = true;
-            MatchStringDictionarySourceComboBox.Items.AddRange(new object[] {
-            "None",
-            "Optional",
-            "PartialMatch",
-            "DirectMatch",
-            "Match",
-            "Wildcard",
-            "DictionaryWildcard"});
-            MatchStringDictionarySourceComboBox.Location = new System.Drawing.Point(170, 44);
+            MatchStringDictionarySourceComboBox.Items.AddRange(new object[] { "Not Implemented Yet"});
+            MatchStringDictionarySourceComboBox.Location = new Point(113, 29);
+            MatchStringDictionarySourceComboBox.Margin = new Padding(2, 2, 2, 2);
             MatchStringDictionarySourceComboBox.Name = "TemplateMatchStringDictionaryComboBox";
-            MatchStringDictionarySourceComboBox.Size = new System.Drawing.Size(614, 28);
+            MatchStringDictionarySourceComboBox.Size = new Size(407, 21);
             MatchStringDictionarySourceComboBox.TabIndex = 6;
-            MatchStringDictionarySourceComboBox.SelectedIndexChanged += MatchStringDictionarySourceComboBoxOnSelectedValueChanged;
-            
+            MatchStringDictionarySourceComboBox.SelectedIndexChanged += MatchStringDictionarySourceComboBoxOnSelectedIndexChanged;
+
             SourceStringLabel.AutoSize = true;
-            SourceStringLabel.Location = new System.Drawing.Point(6, 80);
+            SourceStringLabel.Location = new Point(4, 54);
+            SourceStringLabel.Margin = new Padding(2, 0, 2, 0);
             SourceStringLabel.Name = "TemplateSourceStringLabel";
-            SourceStringLabel.Size = new System.Drawing.Size(106, 20);
+            SourceStringLabel.Size = new Size(71, 13);
             SourceStringLabel.TabIndex = 5;
             SourceStringLabel.Text = "Source String";
-            
-            SourceStringTextBox.Location = new System.Drawing.Point(170, 77);
+
+            SourceStringTextBox.Location = new Point(113, 52);
+            SourceStringTextBox.Margin = new Padding(2, 2, 2, 2);
             SourceStringTextBox.Name = "TemplateSourceStringTextBox";
             SourceStringTextBox.ReadOnly = true;
-            SourceStringTextBox.Size = new System.Drawing.Size(614, 26);
+            SourceStringTextBox.Size = new Size(407, 20);
             SourceStringTextBox.TabIndex = 4;
             SourceStringTextBox.TextChanged += SourceStringTextBoxOnTextChanged;
-            
-            MatchStringSourceTextBox.Location = new System.Drawing.Point(170, 44);
+
+            MatchStringSourceTextBox.Location = new Point(113, 29);
+            MatchStringSourceTextBox.Margin = new Padding(2, 2, 2, 2);
             MatchStringSourceTextBox.Name = "TemplateMatchStringTextBox";
-            MatchStringSourceTextBox.Size = new System.Drawing.Size(614, 26);
+            MatchStringSourceTextBox.Size = new Size(407, 20);
             MatchStringSourceTextBox.TabIndex = 3;
             MatchStringSourceTextBox.TextChanged += MatchStringSourceTextBoxOnTextChanged;
 
 
             MatchStringLabel.AutoSize = true;
-            MatchStringLabel.Location = new System.Drawing.Point(6, 47);
+            MatchStringLabel.Location = new Point(4, 31);
+            MatchStringLabel.Margin = new Padding(2, 0, 2, 0);
             MatchStringLabel.Name = "TemplateMatchStringLabel";
-            MatchStringLabel.Size = new System.Drawing.Size(99, 20);
+            MatchStringLabel.Size = new Size(67, 13);
             MatchStringLabel.TabIndex = 2;
             MatchStringLabel.Text = "Match String";
-            
+
             TypeComboBox.FormattingEnabled = true;
             TypeComboBox.Items.AddRange(new object[] {
             "None",
             "Optional",
-            "PartialMatch",
-            "DirectMatch",
+            "Partial Match",
+            "Direct Match",
             "Match",
             "Wildcard",
-            "DictionaryWildcard"});
-            TypeComboBox.Location = new System.Drawing.Point(170, 10);
+            "Dictionary Wildcard",
+            "Special Wildcard"});
+            TypeComboBox.Location = new Point(113, 6);
+            TypeComboBox.Margin = new Padding(2, 2, 2, 2);
             TypeComboBox.Name = "TemplateTypeComboBox";
-            TypeComboBox.Size = new System.Drawing.Size(614, 28);
+            TypeComboBox.Size = new Size(407, 21);
             TypeComboBox.TabIndex = 1;
             TypeComboBox.SelectedIndexChanged += TypeComboBoxOnSelectedValueChanged;
-            
+
             TypeLabel.AutoSize = true;
-            TypeLabel.Location = new System.Drawing.Point(6, 13);
+            TypeLabel.Location = new Point(4, 8);
+            TypeLabel.Margin = new Padding(2, 0, 2, 0);
             TypeLabel.Name = "TemplateTypeLabel";
-            TypeLabel.Size = new System.Drawing.Size(43, 20);
+            TypeLabel.Size = new Size(31, 13);
             TypeLabel.TabIndex = 0;
             TypeLabel.Text = "Type";
 
@@ -360,6 +372,14 @@ namespace aytimothy.EIChatbot.Editor
             isSetup = false;
         }
 
+        private void MatchStringDictionarySourceComboBoxOnSelectedIndexChanged(object sender, EventArgs e) {
+            if (isSetup)
+                return;
+
+            modified = true;
+            // todo: Convert index to GUID.
+        }
+
         private void IsOutputEntityCheckBoxOnCheckedChanged(object sender, EventArgs e) {
             if (isSetup)
                 return;
@@ -369,6 +389,51 @@ namespace aytimothy.EIChatbot.Editor
         }
 
         private void TypeComboBoxOnSelectedValueChanged(object sender, EventArgs e) {
+            switch ((EntityType)TypeComboBox.SelectedIndex) {
+                case EntityType.None:
+                    MatchStringLabel.Visible = false;
+                    MatchStringDictionarySourceComboBox.Visible = false;
+                    MatchStringSourceTextBox.Visible = false;
+                    PartialThresholdTextBox.Visible = false;
+                    PartialThresholdLabel.Visible = false;
+                    break;
+                case EntityType.Optional:
+                    MatchStringLabel.Visible = true;
+                    MatchStringDictionarySourceComboBox.Visible = false;
+                    MatchStringSourceTextBox.Visible = true;
+                    PartialThresholdTextBox.Visible = false;
+                    PartialThresholdLabel.Visible = false;
+                    break;
+                case EntityType.PartialMatch:
+                    MatchStringLabel.Visible = true;
+                    MatchStringDictionarySourceComboBox.Visible = false;
+                    MatchStringSourceTextBox.Visible = true;
+                    PartialThresholdTextBox.Visible = true;
+                    PartialThresholdLabel.Visible = true;
+                    break;
+                case EntityType.DirectMatch:
+                    goto case EntityType.Optional;
+                case EntityType.Match:
+                    goto case EntityType.Optional;
+                case EntityType.Wildcard:
+                    goto case EntityType.None;
+                    break;
+                case EntityType.DictionaryWildcard:
+                    MatchStringLabel.Visible = true;
+                    MatchStringDictionarySourceComboBox.Visible = true;
+                    MatchStringSourceTextBox.Visible = false;
+                    // todo: Setup combo box for existing dictionaries
+                    break;
+                case EntityType.SpecialWildcard:
+                    MatchStringLabel.Visible = true;
+                    MatchStringDictionarySourceComboBox.Visible = true;
+                    MatchStringSourceTextBox.Visible = false;
+                    // todo: Setup combo box for special wildcards
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
             if (isSetup)
                 return;
 
@@ -410,6 +475,7 @@ namespace aytimothy.EIChatbot.Editor
                 return;
 
             Root.Modified = true;
+            // todo: Convert index to UUID.
         }
 
         private void MatchStringSourceTextBoxOnTextChanged(object sender, EventArgs e) {
@@ -417,6 +483,7 @@ namespace aytimothy.EIChatbot.Editor
                 return;
 
             Root.Modified = true;
+            Data.SourceString = MatchStringSourceTextBox.Text;
         }
     }
 

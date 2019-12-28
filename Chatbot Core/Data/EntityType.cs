@@ -43,6 +43,10 @@ namespace aytimothy.EIChatbot.Data {
         /// <summary>
         /// The same as a wildcard, but it needs to be part of a defined dictionary.
         /// </summary>
-        DictionaryWildcard
+        DictionaryWildcard,
+        /// <summary>
+        /// This same as a wildcard, but must fit some specific format.
+        /// </summary>
+        SpecialWildcard
     }
 }
