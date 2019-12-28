@@ -47,27 +47,31 @@
   <ItemGroup>
     <Compile Include="Chatbot.cs" />
     <Compile Include="ChatbotAsync.cs" />
+    <Compile Include="ChatbotCore.cs" />
     <Compile Include="Data\ChatbotData.cs" />
-    <Compile Include="Data\Dictionary.cs" />
-    <Compile Include="Data\DirectMatchEntity.cs" />
-    <Compile Include="Data\Entity.cs" />
-    <Compile Include="Data\EntityType.cs" />
-    <Compile Include="Data\Intent.cs" />
-    <Compile Include="Data\Knowledgebase.cs" />
-    <Compile Include="Data\Language.cs" />
-    <Compile Include="Data\MatchEntity.cs" />
-    <Compile Include="Data\OptionalEntity.cs" />
-    <Compile Include="Data\OutputEntity.cs" />
-    <Compile Include="Data\PartialMatchEntity.cs" />
-    <Compile Include="Data\SpecialWildcardType.cs" />
+    <Compile Include="Data\External\Dictionary.cs" />
+    <Compile Include="Data\External\DirectMatchEntity.cs" />
+    <Compile Include="Data\External\Entity.cs" />
+    <Compile Include="Data\External\EntityType.cs" />
+    <Compile Include="Data\External\Intent.cs" />
+    <Compile Include="Data\External\Knowledgebase.cs" />
+    <Compile Include="Data\External\Language.cs" />
+    <Compile Include="Data\External\MatchEntity.cs" />
+    <Compile Include="Data\External\OptionalEntity.cs" />
+    <Compile Include="Data\External\OutputEntity.cs" />
+    <Compile Include="Data\External\PartialMatchEntity.cs" />
+    <Compile Include="Data\External\SpecialWildcardType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\Shape.cs" />
-    <Compile Include="Data\Vocabulary.cs" />
-    <Compile Include="Data\DictionaryEntity.cs" />
-    <Compile Include="Data\WildcardEntity.cs" />
+    <Compile Include="Data\External\Shape.cs" />
+    <Compile Include="Data\External\Vocabulary.cs" />
+    <Compile Include="Data\External\DictionaryEntity.cs" />
+    <Compile Include="Data\External\WildcardEntity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Internal\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
