@@ -146,11 +146,13 @@
             // DetailDataGridView
             // 
             this.DetailDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DetailDataGridView.ColumnHeadersVisible = false;
             this.DetailDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Parameter,
             this.Value});
             this.DetailDataGridView.Location = new System.Drawing.Point(416, 27);
             this.DetailDataGridView.Name = "DetailDataGridView";
+            this.DetailDataGridView.RowHeadersVisible = false;
             this.DetailDataGridView.Size = new System.Drawing.Size(337, 381);
             this.DetailDataGridView.TabIndex = 4;
             // 
