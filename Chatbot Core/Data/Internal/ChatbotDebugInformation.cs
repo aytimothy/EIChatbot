@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace aytimothy.EIChatbot.Data {
     public class ChatbotDebugInformation {
-        public Dictionary<string, float> IntentIdentificationConfidence;
         public ShapeIdentificationResult[] ShapeIdentificationResults;
     }
 
     public class ShapeIdentificationResult {
+        public string IntentUUID;
         public string ShapeUUID;
         public int ShapeIndex;
         public float Confidence;
