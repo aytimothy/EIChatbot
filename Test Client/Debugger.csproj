@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatLog.cs" />
     <Compile Include="TopWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,6 +82,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Chatbot Core\Chatbot Core.csproj">
+      <Project>{70ed880a-d243-46e7-9b3b-4a1cef5403e9}</Project>
+      <Name>Chatbot Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

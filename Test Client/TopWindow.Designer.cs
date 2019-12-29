@@ -1,4 +1,4 @@
-﻿namespace Test_Client
+﻿namespace aytimothy.EIChatbot.Debugger
 {
     partial class TopWindow
     {
@@ -71,25 +71,28 @@
             // OpenAgentToolStripMenuItem
             // 
             this.OpenAgentToolStripMenuItem.Name = "OpenAgentToolStripMenuItem";
-            this.OpenAgentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.OpenAgentToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.OpenAgentToolStripMenuItem.Text = "Open Agent";
+            this.OpenAgentToolStripMenuItem.Click += new System.EventHandler(this.OpenAgentToolStripMenuItem_Click);
             // 
             // SaveOutputToolStripMenuItem
             // 
             this.SaveOutputToolStripMenuItem.Name = "SaveOutputToolStripMenuItem";
-            this.SaveOutputToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.SaveOutputToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.SaveOutputToolStripMenuItem.Text = "Save Output";
+            this.SaveOutputToolStripMenuItem.Click += new System.EventHandler(this.SaveOutputToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(136, 6);
             // 
             // QuitToolStripMenuItem
             // 
             this.QuitToolStripMenuItem.Name = "QuitToolStripMenuItem";
-            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.QuitToolStripMenuItem.Text = "Quit";
+            this.QuitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolStripMenuItem_Click);
             // 
             // InputTextBox
             // 
@@ -136,8 +139,9 @@
             this.SubmitButton.Name = "SubmitButton";
             this.SubmitButton.Size = new System.Drawing.Size(75, 23);
             this.SubmitButton.TabIndex = 3;
-            this.SubmitButton.Text = "button1";
+            this.SubmitButton.Text = "Submit";
             this.SubmitButton.UseVisualStyleBackColor = true;
+            this.SubmitButton.Click += new System.EventHandler(this.SubmitButton_Click);
             // 
             // DetailDataGridView
             // 
