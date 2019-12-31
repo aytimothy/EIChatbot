@@ -13,7 +13,7 @@ namespace aytimothy.EIChatbot.Data {
         /// </summary>
         None,
         /// <summary>
-        /// The English Language
+        /// The English Language. Refers to British English.
         /// </summary>
         /// <example>
         /// Hello World!

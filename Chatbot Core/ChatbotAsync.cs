@@ -22,23 +22,23 @@ namespace aytimothy.EIChatbot {
             throw new NotImplementedException();
         }
 
-        public async void LoadIntent(Intent Intent) {
+        public void LoadIntent(Intent Intent) {
             throw new NotImplementedException();
         }
 
-        public async void LoadKnowledgebase(Knowledgebase Knowledgebase) {
+        public void LoadKnowledgebase(Knowledgebase Knowledgebase) {
             throw new NotImplementedException();
         }
 
-        public async void LoadKnowledgebase(string KnowledgebasePath) {
+        public void LoadKnowledgebase(string KnowledgebasePath) {
             throw new NotImplementedException();
         }
 
-        public async void Query(ChatbotRequest Request) {
+        public void Query(ChatbotRequest Request) {
             throw new NotImplementedException();
         }
 
-        public async void Query(string Request) {
+        public void Query(string Request) {
             throw new NotImplementedException();
         }
     }

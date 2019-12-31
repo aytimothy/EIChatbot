@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Test_Client
+namespace aytimothy.EIChatbot.Debugger
 {
     static class Program
     {
