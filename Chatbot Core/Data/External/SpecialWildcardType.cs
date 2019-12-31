@@ -1,4 +1,6 @@
 ﻿namespace aytimothy.EIChatbot.Data {
+    // Followed based on https://cloud.google.com/dialogflow/docs/reference/system-entities
+
     public enum SpecialWildcardType {
         None,
         Date,
@@ -26,7 +28,7 @@
         CurrencyName,
         UnitName,
         Address,
-        StreetAddress,
+        StreetAddress = Address,
         ZIPCode,
         Country,
         City,           // Also known as Towns

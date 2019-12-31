@@ -23,378 +23,520 @@ namespace aytimothy.EIChatbot
         }
 
         public ChatbotResponse QueryWithDebugInfo(ChatbotRequest request, bool showDebugData = true) {
-            //ChatbotResponse response = new ChatbotResponse();
-            //if (showDebugData)
-            //    response.DebugInformation = new ChatbotDebugInformation();
-            //response.PassthroughData = request.PassthroughData;
-            //response.Timestamp = DateTime.Now;
+            ChatbotResponse response = new ChatbotResponse();
+            response.UUID = EditorUtils.ByteArrayToHexString(EditorUtils.GenerateNextGUID());
+            response.Request = request;
+            response.PassthroughData = request.PassthroughData;
+            response.Timestamp = DateTime.Now;
 
-            //DateTime startTime = DateTime.Now;
-            
-            //List<ShapeIdentificationResult> shapeDebugInformation = new List<ShapeIdentificationResult>();
-            //foreach (Intent intent in Intents) {
-            //    for (int i = 0; i < intent.Shapes.Length; i++) {
-            //        ShapeIdentificationResult shapeIDResult = Evaluate(intent, i, request.Request);
-            //    }
-            //}
+            List<ShapeIdentificationResult> shapeIdentificationResults = new List<ShapeIdentificationResult>();
+            int intentIndex;
+            for (intentIndex = 0; intentIndex < Intents.Count; intentIndex++) {
+                Intent intent = Intents[intentIndex];
+                int shapeIndex;
+                for (shapeIndex = 0; shapeIndex < intent.Shapes.Length; shapeIndex++) {
+                    Shape shape = intent.Shapes[shapeIndex];
+                    string[] input = ProcessInput(shape.Language, request.Request);
+                    ShapeIdentificationResult shapeIdentificationResult;
+                    ProcessShape(shape, input);
+                    shapeIdentificationResults.Add(shapeIdentificationResult);
 
-            //return response;
+                    string[] ProcessInput(Language language, string rawInput) {
+                        switch (language) {
+                            case Language.None:
+                                goto case Language.English;
+                            case Language.English:
+                                return rawInput.Split(' ');
+                                break;
+                            case Language.Chinese:
+                                throw new NotImplementedException();
+                            case Language.Japanese:
+                                throw new NotImplementedException();
+                            case Language.German:
+                                goto case Language.English;
+                            default:
+                                goto case Language.English;
+                        }
+                    }
 
-            //ShapeIdentificationResult Evaluate(Intent intent, int shapeIndex, string requestString) {
-            //    ShapeIdentificationResult shapeIdentificationResult = new ShapeIdentificationResult();
-            //    shapeIdentificationResult.IntentUUID = intent.GUID;
-            //    shapeIdentificationResult.ShapeUUID = intent.Shapes[shapeIndex].GUID;
-            //    shapeIdentificationResult.ShapeIndex = shapeIndex;
-                
-            //    Dictionary<string, OutputEntityResult> outputEntityResults = new Dictionary<string, OutputEntityResult>();
-            //    string[] splitString = requestString.Split(' ');
+                    string RawBlockToMatchBlock(Language language, string rawBlock) {
+                        return ProcessBlock(language, rawBlock);
+                    }
 
-            //    List<EntityIdentificationResult> directMatchEntityIdentificationResults = new List<EntityIdentificationResult>();
+                    string ProcessBlock(Language language, string rawBlock) {
+                        switch (language) {
+                            case Language.None:
+                                goto case Language.English;
+                            case Language.English:
+                                return Regex.Replace(rawBlock, @"[\.\,\(\)\[\]\-_\+\!\?\;]", "").ToLower();
+                            case Language.Chinese:
+                                throw new NotImplementedException();
+                            case Language.Japanese:
+                                throw new NotImplementedException();
+                            case Language.German:
+                                goto case Language.English;
+                            default:
+                                goto case Language.English;
+                        }
+                    }
 
-            //    int maxBlockIndex = Math.Min(intent.Shapes[shapeIndex].Entities.Length, splitString.Length);
-            //    float directMatchApproachConfidence = 0f;
-            //    for (int i = 0; i < maxBlockIndex; i++) {
-            //        EntityIdentificationResult entityIdentificationResult = Compare(intent.Shapes[shapeIndex].Language, intent.Shapes[shapeIndex].Entities[i], i, splitString[i]);
+                    void ProcessShape(string[] blockStringArray) {
+                        shapeIdentificationResult = new ShapeIdentificationResult();
+                        shapeIdentificationResult.IntentUUID = intent.GUID;
+                        shapeIdentificationResult.ShapeUUID = shape.GUID;
+                        shapeIdentificationResult.ShapeIndex = shapeIndex;
 
-            //        // do confidence calculation
+                        List<EntityIdentificationResult> entityIdentificationResults = new List<EntityIdentificationResult>();
 
-            //        directMatchEntityIdentificationResults.Add(entityIdentificationResult);
-            //    }
+                        int blockIndex = 0;
+                        int shapeEntityIndex = 0;
+                        while (shapeEntityIndex < shape.Entities.Length && blockIndex < blockStringArray.Length) {
+                            EntityIdentificationResult entityIdentificationResult = ProcessEntity();
+                            entityIdentificationResults.Add(entityIdentificationResult);
+                        }
 
-            //    List<EntityIdentificationResult> delayedStartEntityIdentificationResults = new List<EntityIdentificationResult>();
-            //    float delayedStartApproachConfidence = 0f;
-            //    if (intent.Shapes[shapeIndex].Entities.Length != splitString.Length) {
-            //        int offset = 0;
-            //        for (int i = 0; i < maxBlockIndex; i++) {
-            //            EntityIdentificationResult entityIdentificationResult = Compare(intent.Shapes[shapeIndex].Language, intent.Shapes[shapeIndex].Entities[i], i, splitString[i + offset]);
-                        
-            //            if (!entityIdentificationResult.Success && i == 0) {
-            //                i--;
-            //                offset++;
-            //                continue;
-            //            }
+                        shapeIdentificationResult.EntityChecks = entityIdentificationResults.ToArray();
 
-            //            // do confidence calculation
+                        EntityIdentificationResult ProcessEntity() {
+                            EntityIdentificationResult entityIdentificationResult = new EntityIdentificationResult();
+                            entityIdentificationResult.EntityIndex = shapeEntityIndex;
+                            Entity currentEntity = shape.Entities[shapeEntityIndex];
+                            string currentBlock = blockStringArray[blockIndex];
+                            string currentBlockMatchString = ProcessBlock(shape.Language, currentBlock);
+                            char[] currentEntityChars = currentEntity.RawContents.ToCharArray();
+                            char[] currentBlockChars = currentBlock.ToCharArray();
+                            char[] currentMatchChars = currentBlockMatchString.ToCharArray();
+                            int maxIndex;
+                            int longIndex;
+                            int blockCharIndex;
+                            int entityCharIndex;
+                            int matches;
+                            int altMatches;
+                            int actualMatches;
 
-            //            directMatchEntityIdentificationResults.Add(entityIdentificationResult);
-            //        }
-            //    }
+                            switch (currentEntity.Type) {
+                                case EntityType.None:
+                                    bool isNullOrEmpty = String.IsNullOrEmpty(currentBlockMatchString);
+                                    entityIdentificationResult.Match = (isNullOrEmpty) ? 1f : 0f;
+                                    entityIdentificationResult.Success = isNullOrEmpty;
 
-            //    bool useDelayedStartApproach = delayedStartApproachConfidence > directMatchApproachConfidence;
-            //    shapeIdentificationResult.Confidence = (useDelayedStartApproach) ? delayedStartApproachConfidence : directMatchApproachConfidence;
-            //    shapeIdentificationResult.Result = (shapeIdentificationResult.Confidence >= 0.8f) ? ShapeIdentificationStatus.SuccessMatch : ShapeIdentificationStatus.SuccessNoMatch;
-            //    shapeIdentificationResult.EntityChecks = (useDelayedStartApproach) ? delayedStartEntityIdentificationResults.ToArray() : directMatchEntityIdentificationResults.ToArray();
-            //    return shapeIdentificationResult;
-            //}
+                                    if (entityIdentificationResult.Success) {
+                                        shapeEntityIndex++;
+                                    }
+                                    blockIndex++;
 
-            //EntityIdentificationResult Compare (Language language, Entity entity, int entityIndex, string block) {
-            //    EntityIdentificationResult entityIdentificationResult = new EntityIdentificationResult();
-            //    entityIdentificationResult.EntityIndex = entityIndex;
-            //    entityIdentificationResult.MatchOutput = new Dictionary<string, string>();
+                                    entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                    entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+                                    break;
+                                case EntityType.Optional:
+                                    maxIndex = Math.Min(currentEntityChars.Length, currentMatchChars.Length);
+                                    entityCharIndex = 0;
+                                    for (blockCharIndex = 0; blockCharIndex < maxIndex; blockCharIndex++)
+                                        if (currentEntityChars[entityCharIndex] == currentMatchChars[blockCharIndex])
+                                            entityCharIndex++;
+                                    matches = entityCharIndex;
+                                    blockCharIndex = 0;
+                                    for (entityCharIndex = 0; entityCharIndex < maxIndex; entityCharIndex++)
+                                        if (currentEntityChars[entityCharIndex] == currentMatchChars[blockCharIndex])
+                                            blockCharIndex++;
+                                    altMatches = blockCharIndex;
+                                    // todo: Try to match "escape" and "cscape", where "scape" matches...
+                                    // todo: Try to match "blocks" and "blockd" where "block" matches.
+                                    // todo: Try to match "achecker" and "scheckre" where "check" matches.
+                                    // todo: Try to the above but with variable trailing on both sides.
+                                    actualMatches = Math.Max(matches, altMatches);
 
-            //    string matchBlock = "";
-            //    string matchEntity = "";
-            //    switch (language) {
-            //        case Language.None:
-            //            matchBlock = ConvertToMatchString(Language.None, block);
-            //            matchEntity = ConvertToMatchString(Language.None, entity.RawContents);
-            //            break;
-            //        case Language.English:
-            //            matchBlock = ConvertToMatchString(Language.English, block);
-            //            matchEntity = ConvertToMatchString(Language.English, entity.RawContents);
-            //            break;
-            //        case Language.Chinese:
-            //            matchBlock = ConvertToMatchString(Language.Chinese, block);
-            //            matchEntity = ConvertToMatchString(Language.Chinese, entity.RawContents);
-            //            break;
-            //        case Language.Japanese:
-            //            matchBlock = ConvertToMatchString(Language.Japanese, block);
-            //            matchEntity = ConvertToMatchString(Language.Japanese, entity.RawContents);
-            //            break;
-            //        case Language.German:
-            //            matchBlock = ConvertToMatchString(Language.German, block);
-            //            matchEntity = ConvertToMatchString(Language.German, entity.RawContents);
-            //            break;
-            //        default:
-            //            throw new NotSupportedException("The specified language does not exist, or is not supported.");
-            //    }
+                                    entityIdentificationResult.Match = actualMatches / maxIndex;
+                                    entityIdentificationResult.Success = actualMatches == maxIndex;
 
-            //    char[] matchBlockChars;
-            //    char[] matchEntityChars;
-            //    int maxIndex = 0;
-            //    int maxLength = 0;
-            //    int matchPointer = 0;
+                                    if (entityIdentificationResult.Success) {
+                                        shapeEntityIndex++;
+                                        blockIndex++;
+                                    }
+                                    if (!entityIdentificationResult.Success) {
+                                        if (currentEntity.Type == EntityType.Optional)
+                                            entityCharIndex++;
+                                        if (currentEntity.Type != EntityType.Optional)
+                                            blockIndex++;
+                                    }
 
-            //    switch (entity.Type) {
-            //        case EntityType.None:
-            //            if (String.IsNullOrEmpty(block)) {
-            //                entityIdentificationResult.Match = 1f;
-            //                entityIdentificationResult.Success = true;
-            //            }
-            //            if (!String.IsNullOrEmpty(block)) {
-            //                entityIdentificationResult.Match = 0f;
-            //                entityIdentificationResult.Success = true;
-            //            }
-            //            break;
-            //        case EntityType.Optional:
-            //            goto case EntityType.Match;
-            //        case EntityType.PartialMatch:
-            //            matchBlockChars = matchBlock.ToCharArray();
-            //            matchEntityChars = matchEntity.ToCharArray();
-            //            maxIndex = Math.Min(matchBlockChars.Length, matchEntityChars.Length);
-            //            for (int i = 0; i < maxIndex; i++)
-            //                if (matchBlockChars[i] == matchEntityChars[matchPointer])
-            //                    matchPointer++;
-            //            entityIdentificationResult.Match = matchPointer / maxIndex;
-            //            entityIdentificationResult.Success = matchPointer == maxIndex;
-            //            break;
-            //        case EntityType.DirectMatch:
-            //            matchBlockChars = block.ToCharArray();
-            //            matchEntityChars = entity.SourceString.ToCharArray();
-            //            maxIndex = Math.Min(matchBlockChars.Length, matchEntityChars.Length);
-            //            maxLength = Math.Max(matchBlockChars.Length, matchEntityChars.Length);
-            //            for (int i = 0; i < maxIndex; i++)
-            //                if (matchBlockChars[i] == matchEntityChars[matchPointer])
-            //                    matchPointer++;
-            //            entityIdentificationResult.Match = matchPointer / maxLength;
-            //            entityIdentificationResult.Success = matchPointer == maxLength;
-            //            break;
-            //        case EntityType.Match:
-            //            matchBlockChars = matchBlock.ToCharArray();
-            //            matchEntityChars = matchEntity.ToCharArray();
-            //            maxIndex = Math.Min(matchBlockChars.Length, matchEntityChars.Length);
-            //            maxLength = Math.Max(matchBlockChars.Length, matchEntityChars.Length);
-            //            for (int i = 0; i < maxIndex; i++)
-            //                if (matchBlockChars[i] == matchEntityChars[matchPointer])
-            //                    matchPointer++;
-            //            entityIdentificationResult.Match = matchPointer / maxLength;
-            //            entityIdentificationResult.Success = matchPointer == maxLength;
-            //            break;
-            //        case EntityType.Wildcard:
-            //            if (String.IsNullOrEmpty(block)) {
-            //                entityIdentificationResult.Match = 0f;
-            //                entityIdentificationResult.Success = false;
-            //            }
-            //            if (!String.IsNullOrEmpty(block)) {
-            //                entityIdentificationResult.Match = 1f;
-            //                entityIdentificationResult.Success = true;
-            //            }
-            //            break;
-            //        case EntityType.DictionaryWildcard:
-            //            Dictionary dictionary = FindDictionary(entity.RawContents);
-            //            foreach (Vocabulary vocabulary in dictionary.Vocabulary) {
-            //                string matchMeaning = ConvertToMatchString(language, vocabulary.Meaning);
-            //                if (matchBlock == matchMeaning) {
-            //                    entityIdentificationResult.Match = 1f;
-            //                    entityIdentificationResult.Success = true;
-            //                    entityIdentificationResult.MatchOutput["VocabularyGUID"] = vocabulary.GUID;
-            //                    entityIdentificationResult.MatchOutput["Vocabulary"] = vocabulary.Meaning;
-            //                    break;
-            //                }
+                                    entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                    entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+                                    break;
+                                case EntityType.PartialMatch:
+                                    goto case EntityType.Optional;
+                                    break;
+                                case EntityType.DirectMatch:
+                                    maxIndex = Math.Min(currentEntityChars.Length, currentBlockChars.Length);
+                                    longIndex = Math.Max(currentEntityChars.Length, currentBlockChars.Length);
 
-            //                foreach (string synonym in vocabulary.Synonyms) {
-            //                    string matchSynonym = ConvertToMatchString(language, synonym);
-            //                    if (matchBlock == matchSynonym) {
-            //                        entityIdentificationResult.Match = 1f;
-            //                        entityIdentificationResult.Success = true;
-            //                        entityIdentificationResult.MatchOutput["VocabularyGUID"] = vocabulary.GUID;
-            //                        entityIdentificationResult.MatchOutput["Vocabulary"] = vocabulary.Meaning;
-            //                        break;
-            //                    }
-            //                }
+                                    entityCharIndex = 0;
+                                    for (blockCharIndex = 0; blockCharIndex < maxIndex; blockCharIndex++)
+                                        if (currentEntityChars[entityCharIndex] == currentBlockChars[blockCharIndex])
+                                            entityCharIndex++;
+                                    matches = entityCharIndex;
+                                    blockCharIndex = 0;
+                                    for (entityCharIndex = 0; entityCharIndex < maxIndex; entityCharIndex++)
+                                        if (currentEntityChars[entityCharIndex] == currentBlockChars[blockCharIndex])
+                                            blockCharIndex++;
+                                    altMatches = blockCharIndex;
 
-            //                entityIdentificationResult.Match = 0f;
-            //                entityIdentificationResult.Success = false;
-            //            }
-            //            break;
-            //        case EntityType.SpecialWildcard:
-            //            switch (entity.RawContents) {
-            //                case "S:NONE":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "None";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.None).ToString();
-            //                    break;
-            //                case "S:DATE":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Date";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Date).ToString();
-            //                    break;
-            //                case "S:DTIN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Date Interval";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.DateInterval).ToString();
-            //                    break;
-            //                case "S:TIME":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Time";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Time).ToString();
-            //                    break;
-            //                case "S:TIIN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Time Interval";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.TimeInterval).ToString();
-            //                    break;
-            //                case "S:DTTI":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "DateTime";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.DateTime).ToString();
-            //                    break;
-            //                case "S:TISP":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "DateTime Interval (TimeSpan)";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.TimeSpan).ToString();
-            //                    break;
-            //                case "S:NUMB":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Any Number";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Number).ToString();
-            //                    break;
-            //                case "S:ORDI":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Ordinal";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Ordinal).ToString();
-            //                    break;
-            //                case "S:INTR":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Integer";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Integer).ToString();
-            //                    break;
-            //                case "S:NUSQ":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Number Sequence";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.NumberSequence).ToString();
-            //                    break;
-            //                case "S:FLNU":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Flight Number";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.FlightNumber).ToString();
-            //                    break;
-            //                case "S:ANUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Area Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.AreaUnit).ToString();
-            //                    break;
-            //                case "S:CUUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Currency Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.CurrencyUnit).ToString();
-            //                    break;
-            //                case "S:LGUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Length Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.LengthUnit).ToString();
-            //                    break;
-            //                case "S:SPUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Speed Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.SpeedUnit).ToString();
-            //                    break;
-            //                case "S:VLUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Volume Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.VolumeUnit).ToString();
-            //                    break;
-            //                case "S:WTUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Weight Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.WeightUnit).ToString();
-            //                    break;
-            //                case "S:INUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Information Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.InformationUnit).ToString();
-            //                    break;
-            //                case "S:TMUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Temperature Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.TemperatureUnit).ToString();
-            //                    break;
-            //                case "S:DRUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Duration Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.DurationUnit).ToString();
-            //                    break;
-            //                case "S:AGUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Age Unit";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.AgeUnit).ToString();
-            //                    break;
-            //                case "S:CUNM":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Currency Name";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.CurrencyName).ToString();
-            //                    break;
-            //                case "S:UNNM":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Unit Name";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.UnitName).ToString();
-            //                    break;
-            //                case "S:ADDR":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Address";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Address).ToString();
-            //                    break;
-            //                case "S:STAD":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Street Address";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.StreetAddress).ToString();
-            //                    break;
-            //                case "S:ZIPC":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Postal Code (ZIP Code)";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.ZIPCode).ToString();
-            //                    break;
-            //                case "S:COUN":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Country";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Country).ToString();
-            //                    break;
-            //                case "S:CITY":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "City";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.City).ToString();
-            //                    break;
-            //                case "S:DIST":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "District";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.District).ToString();
-            //                    break;
-            //                case "S:COCO":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Country Code";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.CountryCode).ToString();
-            //                    break;
-            //                case "S:LANG":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Language";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Language).ToString();
-            //                    break;
-            //                case "S:LACO":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Language Code";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.LanguageCode).ToString();
-            //                    break;
-            //                case "S:AIRP":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Airport";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Airport).ToString();
-            //                    break;
-            //                case "S:CORD":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Coordinate";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Coordinate).ToString();
-            //                    break;
-            //                case "S:COSC":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Coordinate Shortcode";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.CoordinateShortcode).ToString();
-            //                    break;
-            //                case "S:MAIL":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Email";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Email).ToString();
-            //                    break;
-            //                case "S:PHNU":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Phone Number";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.PhoneNumber).ToString();
-            //                    break;
-            //                case "S:COLO":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "Color";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.Color).ToString();
-            //                    break;
-            //                case "S:WURL":
-            //                    entityIdentificationResult.MatchOutput["Type"] = "URL";
-            //                    entityIdentificationResult.MatchOutput["TypeID"] = ((int)SpecialWildcardType.URL).ToString();
-            //                    break;
-            //            }
-            //            break;
-            //        default:
-            //            throw new ArgumentOutOfRangeException();
-            //    }
+                                    actualMatches = Math.Max(matches, altMatches);
+                                    entityIdentificationResult.Match = actualMatches / longIndex;
+                                    entityIdentificationResult.Success = actualMatches == longIndex;
 
-            //    return entityIdentificationResult;
-            //}
+                                    if (entityIdentificationResult.Success)
+                                        shapeEntityIndex++;
+                                    blockIndex++;
 
-            //string ConvertToMatchString(Language language, string block) {
-            //    switch (language) {
-            //        case Language.None:
-            //            return "";
-            //        case Language.English:
-            //            return Regex.Replace(block, "[!?\\-,.\\(\\)\\[\\]_ ]", "").ToLower();
-            //        case Language.Chinese:
-            //            return block;
-            //        case Language.Japanese:
-            //            throw new NotImplementedException();
-            //        case Language.German:
-            //            return Regex.Replace(block, "[!?\\-,.\\(\\)\\[\\]_ ]", "").ToLower();
-            //        default:
-            //            throw new NotImplementedException();
-            //    }
-            //}
-            throw new NotImplementedException("// todo: Restructure code so that it makes sense in the context that the inner functions can push forward/back a block (because some entities can be multi-block).");
+                                    entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                    entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+                                    break;
+                                case EntityType.Match:
+                                    maxIndex = Math.Min(currentEntityChars.Length, currentMatchChars.Length);
+                                    longIndex = Math.Max(currentEntityChars.Length, currentMatchChars.Length);
+
+                                    entityCharIndex = 0;
+                                    for (blockCharIndex = 0; blockCharIndex < maxIndex; blockCharIndex++)
+                                        if (currentEntityChars[entityCharIndex] == currentMatchChars[blockCharIndex])
+                                            entityCharIndex++;
+                                    matches = entityCharIndex;
+                                    blockCharIndex = 0;
+                                    for (entityCharIndex = 0; entityCharIndex < maxIndex; entityCharIndex++)
+                                        if (currentEntityChars[entityCharIndex] == currentMatchChars[blockCharIndex])
+                                            blockCharIndex++;
+                                    altMatches = blockCharIndex;
+
+                                    actualMatches = Math.Max(matches, altMatches);
+                                    entityIdentificationResult.Match = actualMatches / longIndex;
+                                    entityIdentificationResult.Success = actualMatches == longIndex;
+
+                                    if (entityIdentificationResult.Success)
+                                        shapeEntityIndex++;
+                                    blockIndex++;
+
+                                    entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                    entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+                                    break;
+                                case EntityType.Wildcard:
+                                    entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                    entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+                                    entityIdentificationResult.Match = 1f;
+                                    entityIdentificationResult.Success = true;
+
+                                    blockIndex++;
+                                    shapeEntityIndex++;
+                                    break;
+                                case EntityType.DictionaryWildcard:
+                                    entityIdentificationResult.Success = false;
+                                    Dictionary dictionary = FindDictionary(currentEntity.RawContents);
+                                    if (dictionary == null) {
+                                        entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                        entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+                                        entityIdentificationResult.MatchOutput["Vocabulary"] = "NoDictionary";
+                                        entityIdentificationResult.MatchOutput["VocabularyValue"] = "NoDictionary";
+                                        entityIdentificationResult.MatchOutput["VocabularyUUID"] = "NoDictionary";
+                                        entityIdentificationResult.MatchOutput["VocabularyIsSynonym"] = "false";
+                                        entityIdentificationResult.MatchOutput["VocabularyIndex"] = "-1";
+                                        entityIdentificationResult.MatchOutput["VocabularySynonymIndex"] = "-1";
+                                        entityIdentificationResult.Match = 0f;
+                                        entityIdentificationResult.Success = false;
+                                        break;
+                                    }
+
+                                    string vocabMatchString;
+                                    string[] vocabMatchStringSplit;
+                                    string[] inputMatchStringSplit;
+                                    float dictionaryStringMatchSuccessThreshold = 0.8f;
+                                    int vocabularyIndex = -1;
+
+                                    foreach (Vocabulary vocabulary in dictionary.Vocabulary) {
+                                        vocabularyIndex++;
+                                        bool breakOut = false;
+                                        int synonymIndex = -1;
+
+                                        SetupDictionaryMatchStrings(vocabulary.Meaning);
+                                        DoDictionaryStringMatching();
+
+                                        if (!breakOut) {
+                                            foreach (string synonym in vocabulary.Synonyms) {
+                                                synonymIndex++;
+                                                SetupDictionaryMatchStrings(synonym);
+                                                DoDictionaryStringMatching();
+                                            }
+                                        }
+
+                                        if (breakOut)
+                                            break;
+
+                                        void SetupDictionaryMatchStrings(string vocabularyEntry) {
+                                            vocabMatchString = ProcessBlock(shape.Language, vocabularyEntry);
+                                            vocabMatchStringSplit = vocabMatchString.Split(' ');
+                                            inputMatchStringSplit = new string[vocabMatchStringSplit.Length];
+                                            for (int i = 0; i < vocabMatchStringSplit.Length; i++)
+                                                if (blockIndex + i < blockStringArray.Length)
+                                                    inputMatchStringSplit[i] = ProcessBlock(shape.Language, blockStringArray[blockIndex + i]);
+                                        }
+
+                                        void DoDictionaryStringMatching() {
+                                            int correctMatches = 0;
+                                            int _dictionaryStringMatchingIndex = 0;
+                                            for (int _inputStringMatchingIndex = 0; _inputStringMatchingIndex <= vocabMatchStringSplit.Length; _inputStringMatchingIndex++)
+                                                if (vocabMatchStringSplit[_dictionaryStringMatchingIndex] == inputMatchStringSplit[_inputStringMatchingIndex]) {
+                                                    _dictionaryStringMatchingIndex++;
+                                                    correctMatches++;
+                                                }
+                                            float dictionaryStringMatchness = (float)correctMatches / (float)vocabMatchStringSplit.Length;
+                                            if (dictionaryStringMatchness >= dictionaryStringMatchSuccessThreshold) {
+                                                breakOut = true;
+                                                entityIdentificationResult.Match = dictionaryStringMatchness;
+                                                entityIdentificationResult.EntityIndex = shapeEntityIndex;
+                                                entityIdentificationResult.Success = true;
+                                                entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                                entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+                                                entityIdentificationResult.MatchOutput["Vocabulary"] = vocabulary.Meaning;
+                                                entityIdentificationResult.MatchOutput["VocabularyValue"] = (synonymIndex >= 0) ? vocabulary.Synonyms[synonymIndex] : vocabulary.Meaning;
+                                                entityIdentificationResult.MatchOutput["VocabularyUUID"] = vocabulary.GUID;
+                                                entityIdentificationResult.MatchOutput["VocabularyIsSynonym"] = (synonymIndex >= 0) ? "true" : "false";
+                                                entityIdentificationResult.MatchOutput["VocabularyIndex"] = vocabularyIndex.ToString();
+                                                entityIdentificationResult.MatchOutput["VocabularySynonymIndex"] = synonymIndex.ToString();
+                                            }
+                                        }
+                                    }
+
+                                    if (!entityIdentificationResult.Success) {
+                                        entityIdentificationResult.Match = 0f;
+                                        entityIdentificationResult.EntityIndex = shapeEntityIndex;
+                                        entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                        entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+                                        entityIdentificationResult.Success = false;
+                                    }
+                                    if (entityIdentificationResult.Success)
+                                        shapeEntityIndex++;
+                                    blockIndex++;
+
+                                    break;
+                                case EntityType.SpecialWildcard:
+                                    entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
+                                    entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
+
+                                    switch (currentEntity.RawContents) {
+                                        case "S:NONE":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.None).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "NONE";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "None";
+                                            break;
+                                        case "S:DATE":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Date).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "DATE";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Date";
+                                            break;
+                                        case "S:DTIN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.DateInterval).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "DTIN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Date Interval";
+                                            break;
+                                        case "S:TIME":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Time).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "TIME";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Time";
+                                            break;
+                                        case "S:DTTI":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.TimeInterval).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "DTIN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Time Interval";
+                                            break;
+                                        case "S:TISP":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.TimeSpan).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "TISP";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Time Span";
+                                            break;
+                                        case "S:NUMB":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Number).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "NUMB";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Any Number";
+                                            break;
+                                        case "S:ORDI":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Ordinal).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "ORDI";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Ordinal Number";
+                                            break;
+                                        case "S:INTR":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Integer).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "INTR";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Integer Number (includes negatives)";
+                                            break;
+                                        case "S:NUSQ":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.NumberSequence).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "NUSQ";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Number Sequence";
+                                            break;
+                                        case "S:FLUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.FlightNumber).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "FLUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Flight Number";
+                                            break;
+                                        case "S:ANUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.AnyUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "ANUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Any Unit";
+                                            break;
+                                        case "S:ARUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.AreaUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "ARUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Area Unit";
+                                            break;
+                                        case "S:CUUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.CurrencyUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "CUUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Currency Unit";
+                                            break;
+                                        case "S:LGUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.LengthUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "LGUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Length Unit";
+                                            break;
+                                        case "S:SPUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.SpeedUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "SPUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Speed Unit";
+                                            break;
+                                        case "S:VLUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.VolumeUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "VLUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Volume Unit";
+                                            break;
+                                        case "S:WTUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.WeightUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "WTUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Weight Unit";
+                                            break;
+                                        case "S:INUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.InformationUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "INUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Information/Data Unit";
+                                            break;
+                                        case "S:TMUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.TemperatureUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "TMUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Temperature Unit";
+                                            break;
+                                        case "S:DRUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.DurationUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "DRUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Duration Unit";
+                                            break;
+                                        case "S:AGUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.AgeUnit).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "AGUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Age Unit";
+                                            break;
+                                        case "S:CUNM":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.CurrencyName).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "CUNM";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Currency Name";
+                                            break;
+                                        case "S:UNNM":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.UnitName).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "UNNM";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Unit Name";
+                                            break;
+                                        case "S:ADDR":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Address).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "ADDR";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Street Address";
+                                            break;
+                                        case "S:STAD":
+                                            // Alias of ADDR.
+                                            goto case "S:ADDR";
+                                        case "S:ZIPC":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.ZIPCode).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "ZIPC";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Postal (ZIP) Code";
+                                            break;
+                                        case "S:COUN":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Country).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "COUN";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Country Name";
+                                            break;
+                                        case "S:CITY":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.City).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "CITY";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "City Name";
+                                            break;
+                                        case "S:DIST":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.District).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "DIST";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "District Name";
+                                            break;
+                                        case "S:COCO":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.CountryCode).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "COCO";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Country Code";
+                                            break;
+                                        case "S:LANG":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Language).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "LANG";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Language";
+                                            break;
+                                        case "S:LACO":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.LanguageCode).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "LACO";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Language Code";
+                                            break;
+                                        case "S:AIRP":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Airport).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "AIRP";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Airport Code/Name";
+                                            break;
+                                        case "S:CORD":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Coordinate).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "CORD";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Coordinate";
+                                            break;
+                                        case "S:COSC":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.CoordinateShortcode).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "COSC";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Coordinate Shortcode";
+                                            break;
+                                        case "S:MAIL":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Email).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "MAIL";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Email Address";
+                                            break;
+                                        case "S:PHNU":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.PhoneNumber).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "PHNU";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Phone Number";
+                                            break;
+                                        case "S:COLO":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.Color).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "COLO";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Color";
+                                            break;
+                                        case "S:WURL":
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardID"] = ((int)SpecialWildcardType.URL).ToString();
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardCode"] = "WURL";
+                                            entityIdentificationResult.MatchOutput["SpecialWildcardType"] = "Web URL/Address";
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+
+                            return entityIdentificationResult;
+                        }
+                    }
+                }
+            }
+
+            response.DebugInformation = new ChatbotDebugInformation();
+            response.DebugInformation.ShapeIdentificationResults = shapeIdentificationResults.ToArray();
+            response.ProcessingTime = DateTime.Now - response.Timestamp;
+            return response;
         }
 
         public ChatbotResponse QueryWithoutDebugInfo(ChatbotRequest request) {
