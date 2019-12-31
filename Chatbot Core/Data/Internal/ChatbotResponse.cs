@@ -36,9 +36,17 @@ namespace aytimothy.EIChatbot.Data
         /// </summary>
         public string ShapeUUID;
         /// <summary>
-        /// The entity that this request matched to.
+        /// The intent that this request matched to.
         /// </summary>
-        public string EntityUUID;
+        public string IntentUUID;
+        /// <summary>
+        /// The intent domain that was matched.
+        /// </summary>
+        public string Intent;
+        /// <summary>
+        /// The confidence of this match.
+        /// </summary>
+        public float Confidence;
         /// <summary>
         /// Passthrough data from the request.
         /// </summary>
@@ -49,7 +57,7 @@ namespace aytimothy.EIChatbot.Data
         /// <remarks>
         /// These are sorted by the GUID of the output entity.
         /// </remarks>
-        public Dictionary<string, OutputEntityResult> OutputEntities;
+        public Dictionary<string, OutputEntityResult> Output;
 
         /// <summary>
         /// Any calculation results. Null if it is not in debug mode.

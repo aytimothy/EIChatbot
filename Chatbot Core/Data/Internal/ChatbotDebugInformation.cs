@@ -40,6 +40,10 @@ namespace aytimothy.EIChatbot.Data {
         /// The results of each individual entity's comparison checks.
         /// </summary>
         public EntityIdentificationResult[] EntityChecks;
+        /// <summary>
+        /// The data from the output entities...
+        /// </summary>
+        public Dictionary<string, OutputEntityResult> OutputEntities;
     }
 
     /// <summary>
