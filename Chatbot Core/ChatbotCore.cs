@@ -38,7 +38,7 @@ namespace aytimothy.EIChatbot
                     Shape shape = intent.Shapes[shapeIndex];
                     string[] input = ProcessInput(shape.Language, request.Request);
                     ShapeIdentificationResult shapeIdentificationResult;
-                    ProcessShape(shape, input);
+                    ProcessShape(input);
                     shapeIdentificationResults.Add(shapeIdentificationResult);
 
                     string[] ProcessInput(Language language, string rawInput) {
