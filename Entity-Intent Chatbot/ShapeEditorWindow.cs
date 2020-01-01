@@ -473,9 +473,9 @@ namespace aytimothy.EIChatbot.Editor
                         case SpecialWildcardType.Address:
                             Data.RawContents = "S:ADDR";
                             break;
-                        case SpecialWildcardType.StreetAddress:
-                            Data.RawContents = "S:STAD";
-                            break;
+                        // case SpecialWildcardType.StreetAddress:
+                        //     Data.RawContents = "S:STAD";
+                        //     break;
                         case SpecialWildcardType.ZIPCode:
                             Data.RawContents = "S:ZIPC";
                             break;
