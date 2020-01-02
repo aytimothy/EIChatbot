@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace aytimothy.EIChatbot.Editor {
     public partial class VocabularyEditorWindow : Form {
-        public DictionaryEditorWindow Parent;
+        public new DictionaryEditorWindow Parent;
         public EventHandler<OnVocabularyEndEdit> OnEndEdit;
         public Vocabulary Data;
 

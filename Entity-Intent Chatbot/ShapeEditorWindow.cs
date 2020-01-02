@@ -225,14 +225,7 @@ namespace aytimothy.EIChatbot.Editor
 
             OutputEntitySlotComboBox.FormattingEnabled = true;
             OutputEntitySlotComboBox.Items.AddRange(new object[] {
-            "None",
-            "Optional",
-            "Partial Match",
-            "Direct Match",
-            "Match",
-            "Wildcard",
-            "Dictionary Wildcard",
-            "Special Wildcard"});
+            "None" });
             OutputEntitySlotComboBox.Location = new Point(113, 114);
             OutputEntitySlotComboBox.Margin = new Padding(2, 2, 2, 2);
             OutputEntitySlotComboBox.Name = "TemplateOutputEntitySlotComboBox";
@@ -367,7 +360,12 @@ namespace aytimothy.EIChatbot.Editor
             MatchStringSourceTextBox.Text = entity.RawContents;
             MatchStringDictionarySourceComboBox.Hide();
             IsOutputEntityCheckBox.Checked = entity.IsOutputEntity;
-            // todo: Find index of the UUID.
+            OutputEntitySlotComboBox.Items.Clear();
+            foreach (OutputEntity outputEntity in Root.ParentWindow.Data.Outputs)
+                OutputEntitySlotComboBox.Items.Add(outputEntity.Name);
+            if (OutputEntitySlotComboBox.Items.Count == 0) {
+                OutputEntitySlotComboBox.Items.Add("None");
+            }
             OutputEntitySlotComboBox.SelectedIndex = 0;
             PartialThresholdTextBox.Text = entity.MatchThreshold.ToString();
             isSetup = false;
@@ -534,6 +532,17 @@ namespace aytimothy.EIChatbot.Editor
 
             Root.Modified = true;
             Data.IsOutputEntity = IsOutputEntityCheckBox.Checked;
+
+            if (Data.IsOutputEntity) {
+                OutputEntitySlotLabel.Show();
+                OutputEntitySlotComboBox.Show();
+                
+            }
+            if (!Data.IsOutputEntity) {
+                OutputEntitySlotLabel.Hide();
+                OutputEntitySlotComboBox.Hide();
+                Data.OutputEntityGUID = "";
+            }
         }
 
         private void TypeComboBoxOnSelectedValueChanged(object sender, EventArgs e) {
@@ -565,7 +574,6 @@ namespace aytimothy.EIChatbot.Editor
                     goto case EntityType.Optional;
                 case EntityType.Wildcard:
                     goto case EntityType.None;
-                    break;
                 case EntityType.DictionaryWildcard:
                     MatchStringLabel.Visible = true;
                     MatchStringDictionarySourceComboBox.Visible = true;
@@ -660,10 +668,11 @@ namespace aytimothy.EIChatbot.Editor
         private void OutputEntitySlotComboBoxOnSelectedValueChanged(object sender, EventArgs e) {
             if (isSetup)
                 return;
+            if (OutputEntitySlotComboBox.Items.Count == 1 && OutputEntitySlotComboBox.Items[0] == "None")
+                return;
 
             Root.Modified = true;
-            // todo: Convert index to UUID.
-            Data.OutputEntityGUID = "Not Implemented";
+            Data.OutputEntityGUID = Root.ParentWindow.Data.Outputs[OutputEntitySlotComboBox.SelectedIndex].GUID;
         }
 
         private void SourceStringTextBoxOnTextChanged(object sender, EventArgs e) {

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace aytimothy.EIChatbot.Editor {
     public partial class MetadataEditorWindow : Form {
-        public EditorWindow Parent;
+        public new EditorWindow Parent;
         bool isPrefilling = false;
 
         public MetadataEditorWindow(EditorWindow Parent) {

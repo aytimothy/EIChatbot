@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace aytimothy.EIChatbot.Editor {
     public partial class AboutWindow : Form, ILocalizedForm {
-        public Form ParentForm;
+        public new Form ParentForm;
 
         public AboutWindow(Form parentForm) {
             InitializeComponent();
