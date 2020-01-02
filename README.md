@@ -32,3 +32,11 @@ I did add (or am working on) logic to help automate the creation of the `Shape` 
 * Create an issue to pitch your idea, do it if given approval\*, then submit a pull request when done.
 
 \*If I change something completely and that completely ruins your project, then well, you *were* been warned.
+
+# Roadmap
+
+* [ ] Custom Unknown Intent
+* [ ] Formatted Wildcard Parsing
+* [ ] Replies from intents (like a proper chatbot and not just returning the intent)
+* [ ] Pre-built Agents
+* [ ] Algorithm Optimizations
