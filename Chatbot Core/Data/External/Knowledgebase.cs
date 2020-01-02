@@ -40,6 +40,11 @@ namespace aytimothy.EIChatbot.Data {
         public Intent[] Intents = new Intent[0];
 
         /// <summary>
+        /// This is the fallback intent for when no intents are matched.
+        /// </summary>
+        public Intent FallbackIntent;
+
+        /// <summary>
         /// Searches the knowledgebase for a dictionary structure with the specified name or GUID.
         /// </summary>
         /// <param name="searchString">The name/GUID of the dictionary to look for.</param>

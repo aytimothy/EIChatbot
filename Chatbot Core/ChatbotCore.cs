@@ -13,6 +13,21 @@ namespace aytimothy.EIChatbot
     public class ChatbotCore {
         public List<Dictionary> Dictionaries = new List<Dictionary>();
         public List<Intent> Intents = new List<Intent>();
+        public Intent FallbackIntent;
+
+        public ChatbotCore() {
+            FallbackIntent = GenerateFallbackEvent();
+        }
+
+        public static Intent GenerateFallbackEvent() {
+            Intent result = new Intent();
+            result.Shapes = new Shape[0];
+            result.IntentDomain = "";
+            result.IntentID = "unknown";
+            result.Outputs = new OutputEntity[0];
+            result.GUID = "";
+            return result;
+        }
 
         public ChatbotResponse Query(ChatbotRequest request) {
             if (request.ReturnDebugInformation)
@@ -585,13 +600,18 @@ namespace aytimothy.EIChatbot
                 response.Response = bestIntent.IntentFullID;
                 response.ShapeUUID = bestIdentification.ShapeUUID;
                 response.IntentUUID = bestIdentification.IntentUUID;
-                response.DebugInformation = new ChatbotDebugInformation();
-                response.DebugInformation.ShapeIdentificationResults = shapeIdentificationResults.ToArray();
-                response.ProcessingTime = DateTime.Now - response.Timestamp;
             }
             if (bestIdentification.Confidence < minimumSuccessConfidence) {
-                throw new NotImplementedException("The unknown intent does not exist.");
+                response.Output = null;
+                response.Confidence = 1f;
+                response.Intent = FallbackIntent.IntentFullID;
+                response.Response = FallbackIntent.IntentFullID;
+                response.ShapeUUID = "";
+                response.IntentUUID = "";
             }
+            response.DebugInformation = new ChatbotDebugInformation();
+            response.DebugInformation.ShapeIdentificationResults = shapeIdentificationResults.ToArray();
+            response.ProcessingTime = DateTime.Now - response.Timestamp;
             return response;
         }
 
