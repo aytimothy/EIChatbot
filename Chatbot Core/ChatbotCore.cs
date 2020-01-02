@@ -55,7 +55,6 @@ namespace aytimothy.EIChatbot
                                 goto case Language.English;
                             case Language.English:
                                 return rawInput.Split(' ');
-                                break;
                             case Language.Chinese:
                                 throw new NotImplementedException();
                             case Language.Japanese:
@@ -65,10 +64,6 @@ namespace aytimothy.EIChatbot
                             default:
                                 goto case Language.English;
                         }
-                    }
-
-                    string RawBlockToMatchBlock(Language language, string rawBlock) {
-                        return ProcessBlock(language, rawBlock);
                     }
 
                     string ProcessBlock(Language language, string rawBlock) {
@@ -90,6 +85,10 @@ namespace aytimothy.EIChatbot
 
                     void ProcessShape(string[] blockStringArray) {
                         shapeIdentificationResult = new ShapeIdentificationResult();
+                        shapeIdentificationResult.IntentUUID = intent.GUID;
+                        shapeIdentificationResult.ShapeUUID = shape.GUID;
+                        shapeIdentificationResult.ShapeIndex = shapeIndex;
+                        shapeIdentificationResult.OutputEntities = new Dictionary<string, OutputEntityResult>();
                         foreach (OutputEntity outputEntity in intent.Outputs)
                             shapeIdentificationResult.OutputEntities[outputEntity.Name] = new OutputEntityResult() {
                                 HasResult = false,
@@ -97,10 +96,6 @@ namespace aytimothy.EIChatbot
                                 OutputEntityUUID = outputEntity.GUID,
                                 Results = new Dictionary<string, string>()
                             };
-                        shapeIdentificationResult.IntentUUID = intent.GUID;
-                        shapeIdentificationResult.ShapeUUID = shape.GUID;
-                        shapeIdentificationResult.ShapeIndex = shapeIndex;
-                        shapeIdentificationResult.OutputEntities = new Dictionary<string, OutputEntityResult>();
 
                         List<EntityIdentificationResult> entityIdentificationResults = new List<EntityIdentificationResult>();
 
@@ -196,7 +191,6 @@ namespace aytimothy.EIChatbot
                                     break;
                                 case EntityType.PartialMatch:
                                     goto case EntityType.Optional;
-                                    break;
                                 case EntityType.DirectMatch:
                                     maxIndex = Math.Min(currentEntityChars.Length, currentBlockChars.Length);
                                     longIndex = Math.Max(currentEntityChars.Length, currentBlockChars.Length);
@@ -255,6 +249,15 @@ namespace aytimothy.EIChatbot
                                     entityIdentificationResult.Match = 1f;
                                     entityIdentificationResult.Success = true;
 
+                                    // todo: Multi-block length wildcards.
+
+                                    if (shape.Entities[shapeEntityIndex].IsOutputEntity)
+                                        foreach (OutputEntity outputEntity in intent.Outputs)
+                                            if (outputEntity.GUID == shape.Entities[shapeEntityIndex].OutputEntityGUID) {
+                                                shapeIdentificationResult.OutputEntities[outputEntity.Name].HasResult = true;
+                                                shapeIdentificationResult.OutputEntities[outputEntity.Name].Results["Result"] = entityIdentificationResult.MatchOutput["RawContents"];
+                                            }
+
                                     blockIndex++;
                                     shapeEntityIndex++;
                                     break;
@@ -272,6 +275,7 @@ namespace aytimothy.EIChatbot
                                         entityIdentificationResult.MatchOutput["VocabularySynonymIndex"] = "-1";
                                         entityIdentificationResult.Match = 0f;
                                         entityIdentificationResult.Success = false;
+                                        blockIndex++;
                                         break;
                                     }
 
@@ -341,6 +345,14 @@ namespace aytimothy.EIChatbot
                                         entityIdentificationResult.MatchOutput["RawContents"] = currentBlock;
                                         entityIdentificationResult.MatchOutput["Contents"] = currentBlockMatchString;
                                         entityIdentificationResult.Success = false;
+
+                                        if (shape.Entities[shapeEntityIndex].IsOutputEntity)
+                                            foreach (OutputEntity outputEntity in intent.Outputs)
+                                                if (outputEntity.GUID == shape.Entities[shapeEntityIndex].OutputEntityGUID) {
+                                                    shapeIdentificationResult.OutputEntities[outputEntity.Name].HasResult = true;
+                                                    shapeIdentificationResult.OutputEntities[outputEntity.Name].Results["Result"] = entityIdentificationResult.MatchOutput["RawContents"];
+                                                    shapeIdentificationResult.OutputEntities[outputEntity.Name].Results["VocabularyGUID"] = entityIdentificationResult.MatchOutput["VocabularyUUID"];
+                                                }
                                     }
                                     if (entityIdentificationResult.Success)
                                         shapeEntityIndex++;
@@ -558,30 +570,28 @@ namespace aytimothy.EIChatbot
                                     throw new ArgumentOutOfRangeException();
                             }
 
-                            if (shape.Entities[shapeEntityIndex].IsOutputEntity)
-                                foreach (OutputEntity outputEntity in intent.Outputs)
-                                    if (outputEntity.GUID == shape.Entities[shapeEntityIndex].OutputEntityGUID) {
-                                        shapeIdentificationResult.OutputEntities[outputEntity.Name].HasResult = false;
-                                        shapeIdentificationResult.OutputEntities[outputEntity.Name].Results["Result"] = entityIdentificationResult.MatchOutput["RawContents"];
-                                        // todo: Pass the rest of the information
-                                    }
-
                             return entityIdentificationResult;
                         }
                     }
                 }
             }
 
-            Intent bestIntent = FindIntent(bestIdentification.IntentUUID);
-            response.Output = bestIdentification.OutputEntities;
-            response.Confidence = bestIdentification.Confidence;
-            response.Intent = bestIntent.IntentFullID;
-            response.Response = "Not Implemented";
-            response.ShapeUUID = bestIdentification.ShapeUUID;
-            response.IntentUUID = bestIdentification.IntentUUID;
-            response.DebugInformation = new ChatbotDebugInformation();
-            response.DebugInformation.ShapeIdentificationResults = shapeIdentificationResults.ToArray();
-            response.ProcessingTime = DateTime.Now - response.Timestamp;
+            float minimumSuccessConfidence = 0.8f;
+            if (bestIdentification.Confidence >= minimumSuccessConfidence) {
+                Intent bestIntent = FindIntent(bestIdentification.IntentUUID);
+                response.Output = bestIdentification.OutputEntities;
+                response.Confidence = bestIdentification.Confidence;
+                response.Intent = bestIntent.IntentFullID;
+                response.Response = bestIntent.IntentFullID;
+                response.ShapeUUID = bestIdentification.ShapeUUID;
+                response.IntentUUID = bestIdentification.IntentUUID;
+                response.DebugInformation = new ChatbotDebugInformation();
+                response.DebugInformation.ShapeIdentificationResults = shapeIdentificationResults.ToArray();
+                response.ProcessingTime = DateTime.Now - response.Timestamp;
+            }
+            if (bestIdentification.Confidence < minimumSuccessConfidence) {
+                throw new NotImplementedException("The unknown intent does not exist.");
+            }
             return response;
         }
 
@@ -625,7 +635,6 @@ namespace aytimothy.EIChatbot
         }
 
         public Vocabulary FindVocabulary(string UUID) {
-            bool broken = false;
             for (int dictIndex = 0; dictIndex < Dictionaries.Count; dictIndex++)
                 for (int vocabIndex = 0; vocabIndex < Dictionaries[dictIndex].Vocabulary.Length; vocabIndex++)
                     if (Dictionaries[dictIndex].Vocabulary[vocabIndex].GUID == UUID)
