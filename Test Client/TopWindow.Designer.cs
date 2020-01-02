@@ -71,26 +71,26 @@
             // OpenAgentToolStripMenuItem
             // 
             this.OpenAgentToolStripMenuItem.Name = "OpenAgentToolStripMenuItem";
-            this.OpenAgentToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.OpenAgentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.OpenAgentToolStripMenuItem.Text = "Open Agent";
             this.OpenAgentToolStripMenuItem.Click += new System.EventHandler(this.OpenAgentToolStripMenuItem_Click);
             // 
             // SaveOutputToolStripMenuItem
             // 
             this.SaveOutputToolStripMenuItem.Name = "SaveOutputToolStripMenuItem";
-            this.SaveOutputToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.SaveOutputToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.SaveOutputToolStripMenuItem.Text = "Save Output";
             this.SaveOutputToolStripMenuItem.Click += new System.EventHandler(this.SaveOutputToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(136, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // QuitToolStripMenuItem
             // 
             this.QuitToolStripMenuItem.Name = "QuitToolStripMenuItem";
-            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.QuitToolStripMenuItem.Text = "Quit";
             this.QuitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolStripMenuItem_Click);
             // 
@@ -98,8 +98,10 @@
             // 
             this.InputTextBox.Location = new System.Drawing.Point(12, 414);
             this.InputTextBox.Name = "InputTextBox";
+            this.InputTextBox.ReadOnly = true;
             this.InputTextBox.Size = new System.Drawing.Size(660, 20);
             this.InputTextBox.TabIndex = 1;
+            this.InputTextBox.Text = "Please load an agent to begin...";
             this.InputTextBox.TextChanged += new System.EventHandler(this.InputTextBox_TextChanged);
             // 
             // OutputDataGridView
@@ -135,6 +137,7 @@
             // 
             // SubmitButton
             // 
+            this.SubmitButton.Enabled = false;
             this.SubmitButton.Location = new System.Drawing.Point(678, 412);
             this.SubmitButton.Name = "SubmitButton";
             this.SubmitButton.Size = new System.Drawing.Size(75, 23);

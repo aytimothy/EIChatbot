@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using aytimothy.EIChatbot.Data;
+using aytimothy.EIChatbot.Editor;
 
 namespace aytimothy.EIChatbot.Debugger
 {
@@ -30,8 +31,12 @@ namespace aytimothy.EIChatbot.Debugger
         private void OpenAgentToolStripMenuItem_Click(object sender, EventArgs e) {
             OpenFileDialog.Filter = "";
             DialogResult dialogResult = OpenFileDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            if (dialogResult == DialogResult.OK) {
                 chatbot.LoadKnowledgebase(OpenFileDialog.FileName);
+                InputTextBox.Text = "";
+                InputTextBox.ReadOnly = false;
+                SubmitButton.Enabled = true;
+            }
         }
 
         private void SaveOutputToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -44,8 +49,12 @@ namespace aytimothy.EIChatbot.Debugger
 
         private void SubmitButton_Click(object sender, EventArgs e) {
             string message = InputTextBox.Text;
-            InputTextBox.Text = "";
             ChatbotRequest request = new ChatbotRequest();
+            request.PassthroughData = new Dictionary<string, string>();
+            request.Request = InputTextBox.Text;
+            request.ReturnDebugInformation = true;
+            request.Timestamp = DateTime.Now;
+            request.UUID = EditorUtils.ByteArrayToHexString(EditorUtils.GenerateNextGUID());
             ChatbotResponse response = chatbot.Query(request);
 
             LogRequest(request);
@@ -72,6 +81,8 @@ namespace aytimothy.EIChatbot.Debugger
 
                 OutputDataGridView.Rows.Add(new object[] { log.Timestamp.ToShortDateString() + " " + log.Timestamp.ToShortTimeString(), "Response", log.Message });
             }
+
+            InputTextBox.Text = "";
         }
     }
 }
