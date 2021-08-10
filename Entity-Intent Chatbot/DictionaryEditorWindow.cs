@@ -64,18 +64,12 @@ namespace aytimothy.EIChatbot.Editor {
             VocabularyEditorWindow _sender = (VocabularyEditorWindow) sender;
             Editors.Remove(_sender);
 
-            bool exists = false;
-            if (Data.Vocabulary.Length > 0) {
-                for (int i = 0; i < Data.Vocabulary.Length; i++) {
-                    if (Data.Vocabulary[i].GUID == e.Data.GUID) {
-                        exists = true;
-                        Data.Vocabulary[i] = e.Data;
-                    }
-                }
-            }
-            if (!exists) {
-                Array.Resize<Vocabulary>(ref Data.Vocabulary, Data.Vocabulary.Length + 1);
-                Data.Vocabulary[Data.Vocabulary.Length - 1] = e.Data;
+            bool exists = Data.Vocabulary.Any(v => v.GUID == e.Data.GUID);
+            if (!exists)
+                Data.Vocabulary.Add(e.Data);
+            else {
+                int index = Data.Vocabulary.FindIndex(v => v.GUID == e.Data.GUID);
+                Data.Vocabulary[index] = e.Data;
             }
 
             UpdateViews();
@@ -105,22 +99,9 @@ namespace aytimothy.EIChatbot.Editor {
         private void VocabularyRemoveButton_Click(object sender, EventArgs e) {
             string guid = (string)VocabularyView.Rows[VocabularyView.CurrentCell.RowIndex].Cells[0].Value;
 
-            bool found = false;
-            int index = -1;
-            for (int i = 0; i < Data.Vocabulary.Length; i++) {
-                if (Data.Vocabulary[i].GUID.ToUpper() == guid.ToUpper()) {
-                    found = true;
-                    index = i;
-                    continue;
-                }
-                if (found)
-                    Data.Vocabulary[i - 1] = Data.Vocabulary[i];
-            }
-
-            if (!found)
-                MessageBox.Show("Could not find intent with GUID: \"" + guid.ToUpper() + "\".", "Error!");
-            if (found)
-                Array.Resize<Vocabulary>(ref Data.Vocabulary, Data.Vocabulary.Length - 1);
+            Vocabulary vocabulary = Data.Vocabulary.First(v => v.GUID == guid);
+            if (vocabulary != null)
+                Data.Vocabulary.Remove(vocabulary);
 
             UpdateViews();
         }

@@ -63,16 +63,12 @@ namespace aytimothy.EIChatbot.Editor {
                 return;
 
             modified = true;
-            bool exists = false;
-            for (int i = 0; i < Data.Shapes.Length; i++)
-                if (Data.Shapes[i].GUID.ToUpper() == e.Data.GUID.ToUpper()) {
-                    exists = true;
-                    Data.Shapes[i] = e.Data;
-                }
-
-            if (!exists) {
-                Array.Resize<Shape>(ref Data.Shapes, Data.Shapes.Length + 1);
-                Data.Shapes[Data.Shapes.Length - 1] = e.Data;
+            bool exists = Data.Shapes.Any(s => s.GUID == e.Data.GUID);
+            if (!exists)
+                Data.Shapes.Add(e.Data);
+            else {
+                int index = Data.Shapes.FindIndex(s => s.GUID == e.Data.GUID);
+                Data.Shapes[index] = e.Data;
             }
 
             UpdateFields();
@@ -100,22 +96,8 @@ namespace aytimothy.EIChatbot.Editor {
         private void RemoveShapeButton_Click(object sender, EventArgs e) {
             string guid = (string)ShapeView.Rows[ShapeView.CurrentCell.RowIndex].Cells[0].Value;
 
-            bool found = false;
-            int index = -1;
-            for (int i = 0; i < Data.Shapes.Length; i++) {
-                if (Data.Shapes[i].GUID.ToUpper() == guid.ToUpper()) {
-                    found = true;
-                    index = i;
-                    continue;
-                }
-                if (found)
-                    Data.Shapes[i - 1] = Data.Shapes[i];
-            }
-
-            if (!found)
-                MessageBox.Show("Could not find shape with GUID: \"" + guid.ToUpper() + "\".", "Error!");
-            if (found)
-                Array.Resize<Shape>(ref Data.Shapes, Data.Shapes.Length - 1);
+            bool exists = Data.Shapes.Any(s => s.GUID == guid);
+            Data.Shapes.Remove(Data.Shapes.First(s => s.GUID == guid));
 
             UpdateFields();
         }
@@ -165,16 +147,12 @@ namespace aytimothy.EIChatbot.Editor {
                 return;
 
             modified = true;
-            bool exists = false;
-            for (int i = 0; i < Data.Outputs.Length; i++)
-                if (Data.Outputs[i].GUID.ToUpper() == e.Data.GUID.ToUpper()) {
-                    exists = true;
-                    Data.Outputs[i] = e.Data;
-                }
-
-            if (!exists) {
-                Array.Resize<OutputEntity>(ref Data.Outputs, Data.Outputs.Length + 1);
-                Data.Outputs[Data.Outputs.Length - 1] = e.Data;
+            bool exists = Data.Outputs.Any(oe => oe.GUID == e.Data.GUID);
+            if (!exists)
+                Data.Outputs.Add(e.Data);
+            else {
+                int index = Data.Outputs.FindIndex(oe => oe.GUID == e.Data.GUID);
+                Data.Outputs[index] = e.Data;
             }
 
             UpdateFields();
@@ -202,22 +180,9 @@ namespace aytimothy.EIChatbot.Editor {
         private void RemoveOutputButton_Click(object sender, EventArgs e) {
             string guid = (string)OutputEntityView.Rows[OutputEntityView.CurrentCell.RowIndex].Cells[0].Value;
 
-            bool found = false;
-            int index = -1;
-            for (int i = 0; i < Data.Outputs.Length; i++) {
-                if (Data.Outputs[i].GUID.ToUpper() == guid.ToUpper()) {
-                    found = true;
-                    index = i;
-                    continue;
-                }
-                if (found)
-                    Data.Outputs[i - 1] = Data.Outputs[i];
-            }
-
-            if (!found)
-                MessageBox.Show("Could not find output entity with GUID: \"" + guid.ToUpper() + "\".", "Error!");
-            if (found)
-                Array.Resize<OutputEntity>(ref Data.Outputs, Data.Outputs.Length - 1);
+            bool exists = Data.Outputs.Any(o => o.GUID == guid);
+            if (exists)
+                Data.Outputs.Remove(Data.Outputs.First(o => o.GUID == guid));
 
             UpdateFields();
         }

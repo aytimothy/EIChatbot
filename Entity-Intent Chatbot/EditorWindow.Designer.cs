@@ -64,10 +64,9 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 687);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 439);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(882, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(588, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -79,8 +78,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(882, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(588, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -95,7 +93,7 @@
             this.toolStripSeparator1,
             this.quitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 19);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // newToolStripMenuItem
@@ -157,7 +155,7 @@
             this.editorToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.metadataToolStripMenuItem});
             this.editorToolStripMenuItem.Name = "editorToolStripMenuItem";
-            this.editorToolStripMenuItem.Size = new System.Drawing.Size(39, 19);
+            this.editorToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editorToolStripMenuItem.Text = "Edit";
             // 
             // metadataToolStripMenuItem
@@ -173,7 +171,7 @@
             this.aboutToolStripMenuItem,
             this.helpToolStripMenuItem1});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 19);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
@@ -197,10 +195,9 @@
             this.GUID,
             this.DictionaryName,
             this.DictionarySize});
-            this.DictionaryView.Location = new System.Drawing.Point(18, 62);
-            this.DictionaryView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.DictionaryView.Location = new System.Drawing.Point(12, 40);
             this.DictionaryView.Name = "DictionaryView";
-            this.DictionaryView.Size = new System.Drawing.Size(846, 231);
+            this.DictionaryView.Size = new System.Drawing.Size(564, 150);
             this.DictionaryView.TabIndex = 2;
             // 
             // GUID
@@ -221,19 +218,17 @@
             // DictionaryLabel
             // 
             this.DictionaryLabel.AutoSize = true;
-            this.DictionaryLabel.Location = new System.Drawing.Point(18, 37);
-            this.DictionaryLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.DictionaryLabel.Location = new System.Drawing.Point(12, 24);
             this.DictionaryLabel.Name = "DictionaryLabel";
-            this.DictionaryLabel.Size = new System.Drawing.Size(92, 20);
+            this.DictionaryLabel.Size = new System.Drawing.Size(62, 13);
             this.DictionaryLabel.TabIndex = 3;
             this.DictionaryLabel.Text = "Dictionaries";
             // 
             // CreateDictionaryButton
             // 
-            this.CreateDictionaryButton.Location = new System.Drawing.Point(18, 302);
-            this.CreateDictionaryButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.CreateDictionaryButton.Location = new System.Drawing.Point(12, 196);
             this.CreateDictionaryButton.Name = "CreateDictionaryButton";
-            this.CreateDictionaryButton.Size = new System.Drawing.Size(112, 35);
+            this.CreateDictionaryButton.Size = new System.Drawing.Size(75, 23);
             this.CreateDictionaryButton.TabIndex = 4;
             this.CreateDictionaryButton.Text = "Add";
             this.CreateDictionaryButton.UseVisualStyleBackColor = true;
@@ -241,10 +236,9 @@
             // 
             // EditDictionaryButton
             // 
-            this.EditDictionaryButton.Location = new System.Drawing.Point(140, 302);
-            this.EditDictionaryButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.EditDictionaryButton.Location = new System.Drawing.Point(93, 196);
             this.EditDictionaryButton.Name = "EditDictionaryButton";
-            this.EditDictionaryButton.Size = new System.Drawing.Size(112, 35);
+            this.EditDictionaryButton.Size = new System.Drawing.Size(75, 23);
             this.EditDictionaryButton.TabIndex = 5;
             this.EditDictionaryButton.Text = "Edit";
             this.EditDictionaryButton.UseVisualStyleBackColor = true;
@@ -252,10 +246,9 @@
             // 
             // RemoveDictionaryButton
             // 
-            this.RemoveDictionaryButton.Location = new System.Drawing.Point(261, 302);
-            this.RemoveDictionaryButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.RemoveDictionaryButton.Location = new System.Drawing.Point(174, 196);
             this.RemoveDictionaryButton.Name = "RemoveDictionaryButton";
-            this.RemoveDictionaryButton.Size = new System.Drawing.Size(112, 35);
+            this.RemoveDictionaryButton.Size = new System.Drawing.Size(75, 23);
             this.RemoveDictionaryButton.TabIndex = 6;
             this.RemoveDictionaryButton.Text = "Remove";
             this.RemoveDictionaryButton.UseVisualStyleBackColor = true;
@@ -264,10 +257,9 @@
             // IntentLabel
             // 
             this.IntentLabel.AutoSize = true;
-            this.IntentLabel.Location = new System.Drawing.Point(18, 360);
-            this.IntentLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.IntentLabel.Location = new System.Drawing.Point(12, 234);
             this.IntentLabel.Name = "IntentLabel";
-            this.IntentLabel.Size = new System.Drawing.Size(59, 20);
+            this.IntentLabel.Size = new System.Drawing.Size(39, 13);
             this.IntentLabel.TabIndex = 7;
             this.IntentLabel.Text = "Intents";
             // 
@@ -279,10 +271,9 @@
             this.IntentName,
             this.IntentDomain,
             this.IntentSize});
-            this.IntentView.Location = new System.Drawing.Point(18, 385);
-            this.IntentView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.IntentView.Location = new System.Drawing.Point(12, 250);
             this.IntentView.Name = "IntentView";
-            this.IntentView.Size = new System.Drawing.Size(846, 231);
+            this.IntentView.Size = new System.Drawing.Size(564, 150);
             this.IntentView.TabIndex = 8;
             // 
             // IntentGUID
@@ -307,10 +298,9 @@
             // 
             // AddIntentButton
             // 
-            this.AddIntentButton.Location = new System.Drawing.Point(18, 625);
-            this.AddIntentButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AddIntentButton.Location = new System.Drawing.Point(12, 406);
             this.AddIntentButton.Name = "AddIntentButton";
-            this.AddIntentButton.Size = new System.Drawing.Size(112, 35);
+            this.AddIntentButton.Size = new System.Drawing.Size(75, 23);
             this.AddIntentButton.TabIndex = 9;
             this.AddIntentButton.Text = "Add";
             this.AddIntentButton.UseVisualStyleBackColor = true;
@@ -318,10 +308,9 @@
             // 
             // EditIntentButton
             // 
-            this.EditIntentButton.Location = new System.Drawing.Point(140, 625);
-            this.EditIntentButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.EditIntentButton.Location = new System.Drawing.Point(93, 406);
             this.EditIntentButton.Name = "EditIntentButton";
-            this.EditIntentButton.Size = new System.Drawing.Size(112, 35);
+            this.EditIntentButton.Size = new System.Drawing.Size(75, 23);
             this.EditIntentButton.TabIndex = 10;
             this.EditIntentButton.Text = "Edit";
             this.EditIntentButton.UseVisualStyleBackColor = true;
@@ -329,10 +318,9 @@
             // 
             // RemoveIntentButton
             // 
-            this.RemoveIntentButton.Location = new System.Drawing.Point(261, 625);
-            this.RemoveIntentButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.RemoveIntentButton.Location = new System.Drawing.Point(174, 406);
             this.RemoveIntentButton.Name = "RemoveIntentButton";
-            this.RemoveIntentButton.Size = new System.Drawing.Size(112, 35);
+            this.RemoveIntentButton.Size = new System.Drawing.Size(75, 23);
             this.RemoveIntentButton.TabIndex = 11;
             this.RemoveIntentButton.Text = "Remove";
             this.RemoveIntentButton.UseVisualStyleBackColor = true;
@@ -340,9 +328,9 @@
             // 
             // EditorWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 709);
+            this.ClientSize = new System.Drawing.Size(588, 461);
             this.Controls.Add(this.RemoveIntentButton);
             this.Controls.Add(this.EditIntentButton);
             this.Controls.Add(this.AddIntentButton);
@@ -356,9 +344,9 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "EditorWindow";
             this.Text = "Chatbot Editor (%FILENAME%)";
+            this.Activated += new System.EventHandler(this.EditorWindow_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditorWindow_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.EditorWindow_FormClosed);
             this.Load += new System.EventHandler(this.EditorWindow_Load);

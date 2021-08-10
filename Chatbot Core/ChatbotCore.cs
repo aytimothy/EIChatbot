@@ -21,10 +21,10 @@ namespace aytimothy.EIChatbot
 
         public static Intent GenerateFallbackEvent() {
             Intent result = new Intent();
-            result.Shapes = new Shape[0];
+            result.Shapes = new List<Shape>();
             result.IntentDomain = "";
             result.IntentID = "unknown";
-            result.Outputs = new OutputEntity[0];
+            result.Outputs = new List<OutputEntity>();
             result.GUID = "";
             return result;
         }
@@ -51,7 +51,7 @@ namespace aytimothy.EIChatbot
             for (intentIndex = 0; intentIndex < Intents.Count; intentIndex++) {
                 Intent intent = Intents[intentIndex];
                 int shapeIndex;
-                for (shapeIndex = 0; shapeIndex < intent.Shapes.Length; shapeIndex++) {
+                for (shapeIndex = 0; shapeIndex < intent.Shapes.Count; shapeIndex++) {
                     Shape shape = intent.Shapes[shapeIndex];
                     string[] input = ProcessInput(shape.Language, request.Request);
                     ShapeIdentificationResult shapeIdentificationResult;
@@ -656,7 +656,7 @@ namespace aytimothy.EIChatbot
 
         public Vocabulary FindVocabulary(string UUID) {
             for (int dictIndex = 0; dictIndex < Dictionaries.Count; dictIndex++)
-                for (int vocabIndex = 0; vocabIndex < Dictionaries[dictIndex].Vocabulary.Length; vocabIndex++)
+                for (int vocabIndex = 0; vocabIndex < Dictionaries[dictIndex].Vocabulary.Count; vocabIndex++)
                     if (Dictionaries[dictIndex].Vocabulary[vocabIndex].GUID == UUID)
                         return Dictionaries[dictIndex].Vocabulary[vocabIndex];
             return null;

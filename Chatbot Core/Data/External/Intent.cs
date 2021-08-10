@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Globalization;
 
 // Kan, busy driver, departing BP around 9:30, everyday
@@ -36,11 +37,11 @@ namespace aytimothy.EIChatbot.Data {
         /// <summary>
         /// This is a list of text patterns that fits this intent.
         /// </summary>
-        public Shape[] Shapes = new Shape[0];
+        public List<Shape> Shapes = new List<Shape>();
         /// <summary>
         /// This is a list of entities shared by all the shapes.
         /// </summary>
-        public OutputEntity[] Outputs = new OutputEntity[0];
+        public List<OutputEntity> Outputs = new List<OutputEntity>();
 
         public Intent() {
 

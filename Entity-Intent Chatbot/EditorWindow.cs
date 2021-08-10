@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using aytimothy.EIChatbot.Data;
@@ -174,23 +175,27 @@ namespace aytimothy.EIChatbot.Editor
         private void UpdateDictionaries() {
             DictionaryView.Rows.Clear();
 
+            if (Data == null)
+                return;
             if (Data.Dictionaries == null)
                 return;
-            if (Data.Dictionaries.Length <= 0)
+            if (Data.Dictionaries.Count <= 0)
                 return;
             foreach (Dictionary dictionary in Data.Dictionaries)
-                DictionaryView.Rows.Add(dictionary.GUID, dictionary.Name, dictionary.Vocabulary.Length.ToString());
+                DictionaryView.Rows.Add(dictionary.GUID, dictionary.Name, dictionary.Vocabulary.Count.ToString());
         }
 
         private void UpdateIntents() {
             IntentView.Rows.Clear();
 
+            if (Data == null)
+                return;
             if (Data.Intents == null)
                 return;
-            if (Data.Intents.Length <= 0)
+            if (Data.Intents.Count <= 0)
                 return;
             foreach (Intent intent in Data.Intents)
-                IntentView.Rows.Add(intent.GUID, intent.IntentID, intent.IntentDomain, intent.Shapes.Length.ToString());
+                IntentView.Rows.Add(intent.GUID, intent.IntentID, intent.IntentDomain, intent.Shapes.Count.ToString());
         }
 
         private void EditorWindow_FormClosing(object sender, FormClosingEventArgs e) {
@@ -227,18 +232,12 @@ namespace aytimothy.EIChatbot.Editor
             DictionaryEditorWindow _sender = (DictionaryEditorWindow)sender;
             DictionaryEditors.Remove(_sender);
 
-            bool exists = false;
-            if (Data.Dictionaries.Length > 0) {
-                for (int i = 0; i < Data.Dictionaries.Length; i++) {
-                    if (Data.Dictionaries[i].GUID == e.Data.GUID) {
-                        exists = true;
-                        Data.Dictionaries[i] = e.Data;
-                    }
-                }
-            }
-            if (!exists) {
-                Array.Resize<Dictionary>(ref Data.Dictionaries, Data.Dictionaries.Length + 1);
-                Data.Dictionaries[Data.Dictionaries.Length - 1] = e.Data;
+            bool exists = Data.Dictionaries.Any(i => i.GUID == e.Data.GUID);
+            if (!exists)
+                Data.Dictionaries.Add(e.Data);
+            else {
+                int index = Data.Intents.FindIndex(i => i.GUID == e.Data.GUID);
+                Data.Dictionaries[index] = e.Data;
             }
 
             UpdateDictionaries();
@@ -271,23 +270,8 @@ namespace aytimothy.EIChatbot.Editor
 
         private void RemoveDictionaryButton_Click(object sender, EventArgs e) {
             string guid = (string)DictionaryView.Rows[DictionaryView.CurrentCell.RowIndex].Cells[0].Value;
-
-            bool found = false;
-            int index = -1;
-            for (int i = 0; i < Data.Dictionaries.Length; i++) {
-                if (Data.Dictionaries[i].GUID.ToUpper() == guid.ToUpper()) {
-                    found = true;
-                    index = i;
-                    continue;
-                }
-                if (found)
-                    Data.Dictionaries[i - 1] = Data.Dictionaries[i];
-            }
-
-            if (!found)
-                MessageBox.Show("Could not find dictionary with GUID: \"" + guid.ToUpper() + "\".", "Error!");
-            if (found)
-                Array.Resize<Dictionary>(ref Data.Dictionaries, Data.Dictionaries.Length - 1);
+            Dictionary dictionary = Data.Dictionaries.FirstOrDefault(d => d.GUID == guid);
+            Data.Dictionaries.Remove(dictionary);
 
             UpdateDictionaries();
         }
@@ -303,18 +287,12 @@ namespace aytimothy.EIChatbot.Editor
             IntentEditorWindow _sender = (IntentEditorWindow) sender;
             IntentEditors.Remove(_sender);
 
-            bool exists = false;
-            if (Data.Intents.Length > 0) {
-                for (int i = 0; i < Data.Intents.Length; i++) {
-                    if (Data.Intents[i].GUID == e.Data.GUID) {
-                        exists = true;
-                        Data.Intents[i] = e.Data;
-                    }
-                }
-            }
-            if (!exists) {
-                Array.Resize<Intent>(ref Data.Intents, Data.Intents.Length + 1);
-                Data.Intents[Data.Intents.Length - 1] = e.Data;
+            bool exists = Data.Intents.Any(i => i.GUID == e.Data.GUID);
+            if (!exists)
+                Data.Intents.Add(e.Data);
+            else {
+                int index = Data.Intents.FindIndex(i => i.GUID == e.Data.GUID);
+                Data.Intents[index] = e.Data;
             }
 
             UpdateIntents();
@@ -343,23 +321,8 @@ namespace aytimothy.EIChatbot.Editor
 
         private void RemoveIntentButton_Click(object sender, EventArgs e) {
             string guid = (string)IntentView.Rows[IntentView.CurrentCell.RowIndex].Cells[0].Value;
-
-            bool found = false;
-            int index = -1;
-            for (int i = 0; i < Data.Intents.Length; i++) {
-                if (Data.Intents[i].GUID.ToUpper() == guid.ToUpper()) {
-                    found = true;
-                    index = i;
-                    continue;
-                }
-                if (found)
-                    Data.Intents[i - 1] = Data.Intents[i];
-            }
-
-            if (!found)
-                MessageBox.Show("Could not find intent with GUID: \"" + guid.ToUpper() + "\".", "Error!");
-            if (found)
-                Array.Resize<Intent>(ref Data.Intents, Data.Intents.Length - 1);
+            Intent intent = Data.Intents.FirstOrDefault(i => i.GUID == guid);
+            Data.Intents.Remove(intent);
 
             UpdateIntents();
         }
@@ -437,6 +400,11 @@ namespace aytimothy.EIChatbot.Editor
 
         private void helpToolStripMenuItem1_Click(object sender, EventArgs e) {
             MessageBox.Show("Not Implemented Yet >:(", "Alert");
+        }
+
+        private void EditorWindow_Activated(object sender, EventArgs e) {
+            UpdateDictionaries();
+            UpdateIntents();
         }
     }
 }

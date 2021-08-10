@@ -115,16 +115,65 @@ namespace aytimothy.EIChatbot.Editor
             foreach (string stringPart in splitString) {
                 if (String.IsNullOrEmpty(stringPart))
                     continue;
-                EntityEditorTab tab = new EntityEditorTab(EntityTabControl, this, new Entity() {
-                    IsOutputEntity = false,
-                    MatchThreshold = 1f,
-                    OutputEntityGUID = null,
-                    RawContents = stringPart,
-                    SourceString = stringPart.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty),
-                    Type = EntityType.Match
-                }, i);
-                i++;
-                ShapeTabs.Add(tab);
+                if (stringPart.EndsWith(".")) {
+                    EntityEditorTab mainTab = new EntityEditorTab(EntityTabControl, this, new Entity {
+                        Type = EntityType.Match,
+                        RawContents = stringPart.Remove(0, stringPart.Length - 1),
+                        SourceString = stringPart.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty),
+                        IsOutputEntity = false,
+                        OutputEntityGUID = null,
+                        MatchThreshold = 1f
+                    }, i);
+                    i++;
+                    EntityEditorTab fullStopTab = new EntityEditorTab(EntityTabControl, this, new Entity {
+                        Type = EntityType.Optional,
+                        RawContents = ".",
+                        SourceString = stringPart,
+                        IsOutputEntity = false,
+                        OutputEntityGUID = null,
+                        MatchThreshold = 1f
+                    }, i);
+                    i++;
+                    ShapeTabs.Add(mainTab);
+                    ShapeTabs.Add(fullStopTab);
+                }
+                else if (stringPart.EndsWith(",")) {
+                    EntityEditorTab mainTab = new EntityEditorTab(EntityTabControl, this, new Entity {
+                        Type = EntityType.Match,
+                        RawContents = stringPart.Remove(0, stringPart.Length - 1),
+                        SourceString = stringPart.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty),
+                        IsOutputEntity = false,
+                        OutputEntityGUID = null,
+                        MatchThreshold = 1f
+                    }, i);
+                    i++;
+                    EntityEditorTab commaTab = new EntityEditorTab(EntityTabControl, this, new Entity {
+                        Type = EntityType.Optional,
+                        RawContents = ",",
+                        SourceString = stringPart,
+                        IsOutputEntity = false,
+                        OutputEntityGUID = null,
+                        MatchThreshold = 1f
+                    }, i);
+                    i++;
+                    ShapeTabs.Add(mainTab);
+                    ShapeTabs.Add(commaTab);
+                }
+                else if (false) {
+                    // find word in dictionaries, if in dictionary, should be a dictionary match tab.
+                }
+                else {
+                    EntityEditorTab tab = new EntityEditorTab(EntityTabControl, this, new Entity() {
+                        IsOutputEntity = false,
+                        MatchThreshold = 1f,
+                        OutputEntityGUID = null,
+                        RawContents = stringPart,
+                        SourceString = stringPart.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty),
+                        Type = EntityType.Match
+                    }, i);
+                    i++;
+                    ShapeTabs.Add(tab);
+                }
             }
 
             EntityCountLabel.Text = "Entities: " + ShapeTabs.Count;
