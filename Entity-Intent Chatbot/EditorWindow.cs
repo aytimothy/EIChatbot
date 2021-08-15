@@ -236,7 +236,7 @@ namespace aytimothy.EIChatbot.Editor
             if (!exists)
                 Data.Dictionaries.Add(e.Data);
             else {
-                int index = Data.Intents.FindIndex(i => i.GUID == e.Data.GUID);
+                int index = Data.Dictionaries.FindIndex(i => i.GUID == e.Data.GUID);
                 Data.Dictionaries[index] = e.Data;
             }
 

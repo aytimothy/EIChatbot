@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using aytimothy.EIChatbot.Data;
 
@@ -108,61 +109,24 @@ namespace aytimothy.EIChatbot.Editor
 
         private void RegenerateEntities() {
             string shapeString = ShapeTextBox.Text;
-            string[] splitString = shapeString.Split(' ');
-
-            // todo: Not recreate the tabs always, and only create new ones where necessary...
+            string regexPattern = "([.!~]+|[*+/\\-,:;@#$%^&_=?'\"<>)(])|([A-Za-z']+|[0-9/.]+)";
+            MatchCollection matches = Regex.Matches(shapeString, regexPattern);
+            List<string> splitString = new List<string>();
+            foreach (var match in matches)
+                splitString.Add(match.ToString());
+            
             int i = 0;
             foreach (string stringPart in splitString) {
-                if (String.IsNullOrEmpty(stringPart))
-                    continue;
-                if (stringPart.EndsWith(".")) {
-                    EntityEditorTab mainTab = new EntityEditorTab(EntityTabControl, this, new Entity {
-                        Type = EntityType.Match,
-                        RawContents = stringPart.Remove(0, stringPart.Length - 1),
-                        SourceString = stringPart.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty),
-                        IsOutputEntity = false,
-                        OutputEntityGUID = null,
-                        MatchThreshold = 1f
-                    }, i);
-                    i++;
-                    EntityEditorTab fullStopTab = new EntityEditorTab(EntityTabControl, this, new Entity {
-                        Type = EntityType.Optional,
-                        RawContents = ".",
-                        SourceString = stringPart,
-                        IsOutputEntity = false,
-                        OutputEntityGUID = null,
-                        MatchThreshold = 1f
-                    }, i);
-                    i++;
-                    ShapeTabs.Add(mainTab);
-                    ShapeTabs.Add(fullStopTab);
+                // todo: Bug in refreshing that doesn't display the special textboxes for non-text-match shapes
+                ShapeGenerationExtensions.SpecialWildcardDetectionResult wildcardDetectionResult;
+                ShapeGenerationExtensions.DictionaryDetectionResult dictionaryDetectionResult;
+                if (stringPart.TrySpecialParse(out wildcardDetectionResult)) {
+                    // if match in a special wildcard
                 }
-                else if (stringPart.EndsWith(",")) {
-                    EntityEditorTab mainTab = new EntityEditorTab(EntityTabControl, this, new Entity {
-                        Type = EntityType.Match,
-                        RawContents = stringPart.Remove(0, stringPart.Length - 1),
-                        SourceString = stringPart.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty),
-                        IsOutputEntity = false,
-                        OutputEntityGUID = null,
-                        MatchThreshold = 1f
-                    }, i);
-                    i++;
-                    EntityEditorTab commaTab = new EntityEditorTab(EntityTabControl, this, new Entity {
-                        Type = EntityType.Optional,
-                        RawContents = ",",
-                        SourceString = stringPart,
-                        IsOutputEntity = false,
-                        OutputEntityGUID = null,
-                        MatchThreshold = 1f
-                    }, i);
-                    i++;
-                    ShapeTabs.Add(mainTab);
-                    ShapeTabs.Add(commaTab);
+                else if (stringPart.TryDictionaryParse(ParentWindow.ParentWindow.Data.Dictionaries, out dictionaryDetectionResult)) {
+                    // if match in a dictionary somewhere
                 }
-                else if (false) {
-                    // find word in dictionaries, if in dictionary, should be a dictionary match tab.
-                }
-                else {
+                else if (stringPart.IsAlphaNumeric()) {
                     EntityEditorTab tab = new EntityEditorTab(EntityTabControl, this, new Entity() {
                         IsOutputEntity = false,
                         MatchThreshold = 1f,
@@ -170,6 +134,18 @@ namespace aytimothy.EIChatbot.Editor
                         RawContents = stringPart,
                         SourceString = stringPart.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty),
                         Type = EntityType.Match
+                    }, i);
+                    i++;
+                    ShapeTabs.Add(tab);
+                }
+                else {
+                    EntityEditorTab tab = new EntityEditorTab(EntityTabControl, this, new Entity() {
+                        IsOutputEntity = false,
+                        MatchThreshold = 0f,
+                        OutputEntityGUID = null,
+                        RawContents = stringPart,
+                        SourceString = stringPart.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty),
+                        Type = EntityType.Optional
                     }, i);
                     i++;
                     ShapeTabs.Add(tab);
@@ -402,12 +378,25 @@ namespace aytimothy.EIChatbot.Editor
 
         public void FillValues(Entity entity) {
             isSetup = true;
-            Page.Text = entity.RawContents;
+            Page.Text = entity.SourceString;
             TypeComboBox.SelectedIndex = (int) entity.Type;
             SourceStringTextBox.Text = entity.SourceString;
             // todo: Tell the difference between a dictionary and a string match.
-            MatchStringSourceTextBox.Text = entity.RawContents;
-            MatchStringDictionarySourceComboBox.Hide();
+            MatchStringSourceTextBox.Text = entity.SourceString;
+            if (entity.Type == EntityType.DictionaryWildcard || entity.Type == EntityType.SpecialWildcard) {
+                MatchStringDictionarySourceComboBox.Show();
+                if (entity.Type == EntityType.DictionaryWildcard) {
+                    SetupComboBoxForDictionaries();
+                    isSetup = true;
+                    MatchStringDictionarySourceComboBox.SelectedIndex = Root.ParentWindow.ParentWindow.Data.Dictionaries.IndexOf(Root.ParentWindow.ParentWindow.Data.Dictionaries.First(d => d.GUID.ToLower() == entity.RawContents.ToLower()));
+                }
+                if (entity.Type == EntityType.SpecialWildcard) {
+                    SetupComboBoxForWildcards(true);
+                    MatchStringDictionarySourceComboBox.SelectedIndex = (int)SpecialWildcardTypeOperations.RawStringIdentifierToWildcardType(entity.RawContents);
+                }
+            }
+            else
+                MatchStringDictionarySourceComboBox.Hide();
             IsOutputEntityCheckBox.Checked = entity.IsOutputEntity;
             OutputEntitySlotComboBox.Items.Clear();
             foreach (OutputEntity outputEntity in Root.ParentWindow.Data.Outputs)
@@ -438,132 +427,132 @@ namespace aytimothy.EIChatbot.Editor
                 case EntityType.Wildcard:
                     return;
                 case EntityType.DictionaryWildcard:
-                    Data.OutputEntityGUID = Root.ParentWindow.ParentWindow.Data.Dictionaries[MatchStringDictionarySourceComboBox.SelectedIndex].GUID;
+                    Data.RawContents = Root.ParentWindow.ParentWindow.Data.Dictionaries[MatchStringDictionarySourceComboBox.SelectedIndex].GUID;
                     break;
                 case EntityType.SpecialWildcard:
                     switch ((SpecialWildcardType) MatchStringDictionarySourceComboBox.SelectedIndex) {
                         case SpecialWildcardType.None:
-                            Data.RawContents = "S:NONE";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.None;
                             break;
                         case SpecialWildcardType.Date:
-                            Data.RawContents = "S:DATE";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Date;
                             break;
                         case SpecialWildcardType.DateInterval:
-                            Data.RawContents = "S:DTIN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.DateInterval;
                             break;
                         case SpecialWildcardType.Time:
-                            Data.RawContents = "S:TIME";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Time;
                             break;
                         case SpecialWildcardType.TimeInterval:
-                            Data.RawContents = "S:TIIN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.TimeInterval;
                             break;
                         case SpecialWildcardType.DateTime:
-                            Data.RawContents = "S:DTTI";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.DateTime;
                             break;
                         case SpecialWildcardType.TimeSpan:
-                            Data.RawContents = "S:TISP";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.TimeSpan;
                             break;
                         case SpecialWildcardType.Number:
-                            Data.RawContents = "S:NUMB";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Number;
                             break;
                         case SpecialWildcardType.Ordinal:
-                            Data.RawContents = "S:ORDI";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Ordinal;
                             break;
                         case SpecialWildcardType.Integer:
-                            Data.RawContents = "S:INTR";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Integer;
                             break;
                         case SpecialWildcardType.NumberSequence:
-                            Data.RawContents = "S:NUSQ";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.NumberSequence;
                             break;
                         case SpecialWildcardType.FlightNumber:
-                            Data.RawContents = "S:FLNU";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.FlightNumber;
                             break;
                         case SpecialWildcardType.AnyUnit:
-                            Data.RawContents = "S:ANUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.AnyUnit;
                             break;
                         case SpecialWildcardType.AreaUnit:
-                            Data.RawContents = "S:ARUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.AreaUnit;
                             break;
                         case SpecialWildcardType.CurrencyUnit:
-                            Data.RawContents = "S:CUUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.CurrencyUnit;
                             break;
                         case SpecialWildcardType.LengthUnit:
-                            Data.RawContents = "S:LGUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.LengthUnit;
                             break;
                         case SpecialWildcardType.SpeedUnit:
-                            Data.RawContents = "S:SPUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.SpeedUnit;
                             break;
                         case SpecialWildcardType.VolumeUnit:
-                            Data.RawContents = "S:VLUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.VolumeUnit;
                             break;
                         case SpecialWildcardType.WeightUnit:
-                            Data.RawContents = "S:WTUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.WeightUnit;
                             break;
                         case SpecialWildcardType.InformationUnit:
-                            Data.RawContents = "S:INUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.InformationUnit;
                             break;
                         case SpecialWildcardType.TemperatureUnit:
-                            Data.RawContents = "S:TMUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.TemperatureUnit;
                             break;
                         case SpecialWildcardType.DurationUnit:
-                            Data.RawContents = "S:DRUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.DurationUnit;
                             break;
                         case SpecialWildcardType.AgeUnit:
-                            Data.RawContents = "S:AGUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.AgeUnit;
                             break;
                         case SpecialWildcardType.CurrencyName:
-                            Data.RawContents = "S:CUNM";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.CurrencyName;
                             break;
                         case SpecialWildcardType.UnitName:
-                            Data.RawContents = "S:UNNM";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.UnitName;
                             break;
                         case SpecialWildcardType.Address:
-                            Data.RawContents = "S:ADDR";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Address;
                             break;
                         // case SpecialWildcardType.StreetAddress:
-                        //     Data.RawContents = "S:STAD";
+                        //     Data.RawContents = SpecialWildcardTypeOperations.CodeNames.StreetAddress;
                         //     break;
                         case SpecialWildcardType.ZIPCode:
-                            Data.RawContents = "S:ZIPC";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.ZIPCode;
                             break;
                         case SpecialWildcardType.Country:
-                            Data.RawContents = "S:COUN";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Country;
                             break;
                         case SpecialWildcardType.City:
-                            Data.RawContents = "S:CITY";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.City;
                             break;
                         case SpecialWildcardType.District:
-                            Data.RawContents = "S:DIST";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.District;
                             break;
                         case SpecialWildcardType.CountryCode:
-                            Data.RawContents = "S:COCO";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.CountryCode;
                             break;
                         case SpecialWildcardType.Language:
-                            Data.RawContents = "S:LANG";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Language;
                             break;
                         case SpecialWildcardType.LanguageCode:
-                            Data.RawContents = "S:LACO";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.LanguageCode;
                             break;
                         case SpecialWildcardType.Airport:
-                            Data.RawContents = "S:AIRP";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Airport;
                             break;
                         case SpecialWildcardType.Coordinate:
-                            Data.RawContents = "S:CORD";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Coordinate;
                             break;
                         case SpecialWildcardType.CoordinateShortcode:
-                            Data.RawContents = "S:COSC";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.CoordinateShortcode;
                             break;
                         case SpecialWildcardType.Email:
-                            Data.RawContents = "S:MAIL";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Email;
                             break;
                         case SpecialWildcardType.PhoneNumber:
-                            Data.RawContents = "S:PHNU";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.PhoneNumber;
                             break;
                         case SpecialWildcardType.Color:
-                            Data.RawContents = "S:COLO";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.Color;
                             break;
                         case SpecialWildcardType.URL:
-                            Data.RawContents = "S:WURL";
+                            Data.RawContents = SpecialWildcardTypeOperations.CodeNames.URL;
                             break;
                         default:
                             Data.RawContents = "S:#" + MatchStringDictionarySourceComboBox.SelectedIndex.ToString("000");
@@ -644,64 +633,67 @@ namespace aytimothy.EIChatbot.Editor
 
             Root.Modified = true;
             Data.Type = (EntityType) TypeComboBox.SelectedIndex;
-
-            void SetupComboBoxForDictionaries() {
-                List<object> DictionaryNames = new List<object>();
-                foreach (Dictionary dictionary in Root.ParentWindow.ParentWindow.Data.Dictionaries)
-                    DictionaryNames.Add(dictionary.Name);
-                MatchStringDictionarySourceComboBox.Items.Clear();
-                MatchStringDictionarySourceComboBox.Items.AddRange(DictionaryNames.ToArray());
-            }
-
-            void SetupComboBoxForWildcards() {
-                isSetup = true;
-                MatchStringDictionarySourceComboBox.Items.Clear();
-                MatchStringDictionarySourceComboBox.Items.AddRange(new object[] {
-                    "None",
-                    "Date",
-                    "Date Interval",
-                    "Time",
-                    "Time Interval",
-                    "DateTime",
-                    "TimeSpan",
-                    "Number",
-                    "Ordinal",
-                    "Integer",
-                    "Number Sequence",
-                    "Flight Number",   
-                    "AnyUnit",
-                    "AreaUnit",
-                    "Currency Unit",
-                    "Length Unit",
-                    "Speed Unit",
-                    "Volume Unit",
-                    "Weight Unit",
-                    "Information Unit",
-                    "Temperature Unit",
-                    "Duration Unit",
-                    "AgeUnit",
-                    "CurrencyName",
-                    "UnitName",
-                    "Address",
-                    "Street Address",
-                    "ZIPCode",
-                    "Country",
-                    "City",           
-                    "District",       
-                    "Country Code",
-                    "Language",
-                    "Language Code",
-                    "Airport",
-                    "Coordinate",
-                    "Coordinate Shortcode",
-                    "Email",
-                    "PhoneNumber",
-                    "Color",
-                    "URL"
-                });
-                isSetup = false;
-            }
         }
+
+        void SetupComboBoxForDictionaries() {
+            List<object> DictionaryNames = new List<object>();
+            foreach (Dictionary dictionary in Root.ParentWindow.ParentWindow.Data.Dictionaries)
+                DictionaryNames.Add(dictionary.Name);
+            MatchStringDictionarySourceComboBox.Items.Clear();
+            MatchStringDictionarySourceComboBox.Items.AddRange(DictionaryNames.ToArray());
+        }
+
+        void SetupComboBoxForWildcards(bool isStillSettingUp = false) {
+            if (!isStillSettingUp)
+                isSetup = true;
+            MatchStringDictionarySourceComboBox.Items.Clear();
+            MatchStringDictionarySourceComboBox.Items.AddRange(new object[] {
+                    SpecialWildcardTypeOperations.FullNames.None,
+                    SpecialWildcardTypeOperations.FullNames.Date,
+                    SpecialWildcardTypeOperations.FullNames.DateInterval,
+                    SpecialWildcardTypeOperations.FullNames.Time,
+                    SpecialWildcardTypeOperations.FullNames.TimeInterval,
+                    SpecialWildcardTypeOperations.FullNames.DateTime,
+                    SpecialWildcardTypeOperations.FullNames.TimeSpan,
+                    SpecialWildcardTypeOperations.FullNames.Number,
+                    SpecialWildcardTypeOperations.FullNames.Ordinal,
+                    SpecialWildcardTypeOperations.FullNames.Integer,
+                    SpecialWildcardTypeOperations.FullNames.NumberSequence,
+                    SpecialWildcardTypeOperations.FullNames.FlightNumber,
+                    SpecialWildcardTypeOperations.FullNames.AnyUnit,
+                    SpecialWildcardTypeOperations.FullNames.AreaUnit,
+                    SpecialWildcardTypeOperations.FullNames.CurrencyUnit,
+                    SpecialWildcardTypeOperations.FullNames.LengthUnit,
+                    SpecialWildcardTypeOperations.FullNames.SpeedUnit,
+                    SpecialWildcardTypeOperations.FullNames.VolumeUnit,
+                    SpecialWildcardTypeOperations.FullNames.WeightUnit,
+                    SpecialWildcardTypeOperations.FullNames.InformationUnit,
+                    SpecialWildcardTypeOperations.FullNames.TemperatureUnit,
+                    SpecialWildcardTypeOperations.FullNames.DurationUnit,
+                    SpecialWildcardTypeOperations.FullNames.AgeUnit,
+                    SpecialWildcardTypeOperations.FullNames.CurrencyName,
+                    SpecialWildcardTypeOperations.FullNames.UnitName,
+                    SpecialWildcardTypeOperations.FullNames.Address,
+                    SpecialWildcardTypeOperations.FullNames.StreetAddress,
+                    SpecialWildcardTypeOperations.FullNames.ZIPCode,
+                    SpecialWildcardTypeOperations.FullNames.Country,
+                    SpecialWildcardTypeOperations.FullNames.City,
+                    SpecialWildcardTypeOperations.FullNames.District,
+                    SpecialWildcardTypeOperations.FullNames.CountryCode,
+                    SpecialWildcardTypeOperations.FullNames.Language,
+                    SpecialWildcardTypeOperations.FullNames.LanguageCode,
+                    SpecialWildcardTypeOperations.FullNames.Airport,
+                    SpecialWildcardTypeOperations.FullNames.Coordinate,
+                    SpecialWildcardTypeOperations.FullNames.CoordinateShortcode,
+                    SpecialWildcardTypeOperations.FullNames.Email,
+                    SpecialWildcardTypeOperations.FullNames.PhoneNumber,
+                    SpecialWildcardTypeOperations.FullNames.Color,
+                    SpecialWildcardTypeOperations.FullNames.URL
+                });
+            if (!isStillSettingUp)
+                isSetup = false;
+        }
+
         private void PartialThresholdTextBoxOnTextChanged(object sender, EventArgs e) {
             if (isSetup)
                 return;
@@ -752,5 +744,34 @@ namespace aytimothy.EIChatbot.Editor
     public class OnShapeEndEdit : EventArgs {
         public Shape Data;
         public DialogResult DialogResult;
+    }
+
+    public static class ShapeGenerationExtensions {
+        public class SpecialWildcardDetectionResult {
+            public SpecialWildcardType WildcardType;
+            public string MatchString;
+            public object MatchObject;
+        }
+
+        public class DictionaryDetectionResult {
+            public string DictionaryGUID;
+            public string WordGUID;
+            public string MatchWord;
+            public bool IsMatch;
+        }
+
+        public static bool IsAlphaNumeric(this string input) {
+            return Regex.IsMatch(input, "^[a-zA-Z0-9]*$");
+        }
+
+        public static bool TrySpecialParse(this string input, out SpecialWildcardDetectionResult result) {
+            result = null;
+            return false;
+        }
+
+        public static bool TryDictionaryParse(this string input, List<Dictionary> dictionaries, out DictionaryDetectionResult result) {
+            result = null;
+            return false;
+        }
     }
 }
